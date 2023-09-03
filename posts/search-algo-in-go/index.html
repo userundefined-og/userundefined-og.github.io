@@ -149,7 +149,7 @@
 </span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">current</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">node</span>
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Search</span>) <span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Search</span>) <span style="color:#a6e22e">Run</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">Solution</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">done</span>, <span style="color:#a6e22e">solution</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">step</span>()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">done</span> {

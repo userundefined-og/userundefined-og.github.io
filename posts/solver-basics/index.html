@@ -112,7 +112,7 @@
 
     
 
-    <p>In the previous post I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>
+    <p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>
 <h2 id="closer-look-at-n-queens-problem">Closer look at N-queens problem</h2>
 <p>To recap the previous post, the goal of solving the N-queens problem is to find a way to place N queens on an NxN chessboard in a way that the queens are not attacking each other. I also mentioned that a common way of modeling this problem is by having over variable per queen, where variable M represents the queen in column M, and this model choice effectively ensures that no pair of queens share the same column. One thing I omitted earlier is that each variable is also associated with its <em>domain</em>, which is basically the set of values that could be assigned to the variable. For N-queens the domain of all variables is $\set{1, &hellip;, N}$. A value from this domain simply represents the row, from $1$ to $N$, that a particular queen is assigned to.</p>
 <p>Constraints for N-queens get a little bit more interesting: by the definition of variables we know that no pair of queens will attack each other vertically, since they cannot share the same column, but we still need to make sure they will not attack each other horizontally and diagonally.</p>
@@ -162,6 +162,8 @@
         
         </li>
         <li>
+        
+            <a href="https://blog.dawnofthe.dad/posts/search-algo-in-go/">Search Algo in Go <i class="fa fa-chevron-circle-right"></i> </a>
         
         </li>
     </ul>

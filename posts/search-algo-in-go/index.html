@@ -185,7 +185,7 @@
 <ul>
 <li>For <code>freshNode</code> search makes a decision; if that&rsquo;s <code>nil</code> then we have a solution, otherwise we create a child node and move into it.</li>
 <li>For <code>solutionFound</code> search simply backtracks, so that search can continue to the next solution.</li>
-<li>For <code>assignmentTried</code> search flips the assignment to <em>unassignment</em> (e.g., if the assignment was $A = 5$ it&rsquo;ll become $A \ne 5$). This is where the binary nature of the search tree comes from, that I mentioned in my other posts.</li>
+<li>For <code>assignmentTried</code> search flips the assignment to <em>unassignment</em> (e.g., if the assignment was \(A = 5\) it&rsquo;ll become \(A \ne 5\)). This is where the binary nature of the search tree comes from, that I mentioned in my other posts.</li>
 <li>For <code>unassignmentTried</code> search knows that at this point no more solutions can be found in the current subtree and it needs to backtrack. If search detects that it is already at the root node, that means it has nowhere to backtrack to and there are no more solutions at all.</li>
 </ul>
 <p>And that&rsquo;s the heart of the constructive search algorithm!</p>

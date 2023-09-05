@@ -100,7 +100,7 @@ In this post I&rsquo;ll cover two constraint propagation techniques: forward che
         </li>
         
 
-        <li>8 minute read</li>
+        <li>7 minute read</li>
     </ul>
 </aside>
 
@@ -203,11 +203,7 @@ In this post I&rsquo;ll cover two constraint propagation techniques: forward che
 </ul>
 <h3 id="example-with-4-queens">Example with 4-queens</h3>
 <p><img src="/4q-prop.svg" alt="4 queens problem and constraint propagation"></p>
-<p>Hopefully by now the header image makes sense - it&rsquo;s an example of applying forward checking to 4-queens after placing the first queen, Q1, on row #1. You can also see that after placing Q1:</p>
-<ul>
-<li><code>propagate(false)</code>, with forward checking, would proactively prune live domains of the remaining queens, as shown in the diagram.</li>
-<li><code>propagate(true)</code>, with arc consistency, would go quite a bit further and detect that placing Q2 on row #3 is not viable, because Q3&rsquo;s live domain would be wiped out, and would remove row #3 from Q2&rsquo;s domain. It would then notice that Q3 cannot be on row #4, because row #4 now must be taken by Q2, leaving Q3 with only row #2. And finally it would note that Q4 cannot go on row #2 because Q3 must be on row #2, and the diagonal attack prevents Q4 from going on row #3, thus wiping out Q4&rsquo;s live domain and causing <code>propagate</code> to prevent us from stepping any further into this subtree at all.</li>
-</ul>
+<p>Hopefully by now the header image makes sense - it&rsquo;s an example of applying forward checking to 4-queens after placing the first queen, Q1, on row #1.</p>
 
 </article>
 

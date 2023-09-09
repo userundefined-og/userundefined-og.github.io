@@ -1,0 +1,205 @@
+<!doctype html>
+
+<html lang="en-us">
+
+<head>
+  <title>Heuristics - Blog of the Dad</title>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="The HTML5 Herald" />
+<meta name="author" content="Andrei" /><meta property="og:title" content="Heuristics" />
+<meta property="og:description" content="Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make generally good decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.
+There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.dawnofthe.dad/posts/heuristics/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-07T17:23:19-07:00" />
+<meta property="article:modified_time" content="2023-09-07T17:23:19-07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Heuristics"/>
+<meta name="twitter:description" content="Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make generally good decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.
+There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work."/>
+
+<meta name="generator" content="Hugo 0.117.0">
+    
+    <script src="/js/mathjax-config.js" defer></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://blog.dawnofthe.dad/fontawesome/css/all.min.css" />
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  
+  
+  <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      
+      <h1>
+        <a href="/">Blog of the Dad</a>
+      </h1>
+
+      <ul id="social-media">
+             <li>
+               <a href="https://twitter.com/userundefinedrd" title="Twitter">
+               <i class="fab fa-twitter fa-lg"></i>
+               </a>
+             </li>
+             <li>
+               <a href="https://reddit.com/u/userundefined" title="Reddit">
+               <i class="fab fa-reddit-alien fa-lg"></i>
+               </a>
+             </li>
+      </ul>
+      
+      <p><em>Don’t eat me. I have a wife and kids. Eat them.</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+    </ul>
+</nav>
+
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Heuristics</h1>
+
+    
+      <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2023-09-07T17:23:19-07:00">Sep 7, 2023</time>
+        </li>
+        
+        
+
+        
+        <li>
+            <em>
+                
+                    
+                    <a href="/tags/constructive-search">#Constructive search</a>
+                
+            </em>
+        </li>
+        
+
+        <li>6 minute read</li>
+    </ul>
+</aside>
+
+    
+
+    
+      
+
+    
+
+    <p>Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make <em>generally good</em> decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.</p>
+<p>There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work.</p>
+<h2 id="decisions-decisions-">Decisions, decisions &hellip;</h2>
+<p>You may recall this little bit of code from an <a href="https://blog.dawnofthe.dad/posts/search-algo-in-go/">earlier post</a> where we covered the search algorithm:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span>    <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">current</span>.<span style="color:#a6e22e">decision</span> = <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">makeNextDecision</span>()
+</span></span></code></pre></div><p>This call to <code>makeNextDecision</code> is made whenever we enter a new node in the search tree. To give a quick reminder, at this point we may have made other decisions at the ancestor nodes in the search tree and are exploring some subspace of the overall search space. We&rsquo;ll keep making decisions until we either find a solution, or exhaust the possibilities. Also, as another quick reminder, when I say &ldquo;make a decision&rdquo;, I am referring to picking an unassigned variable and a value from its live domain to try next. You can check out the older posts if you need a refresher on <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/">live domains, constraint propagation</a> and <a href="https://blog.dawnofthe.dad/posts/solver-basics/">solver basics in general</a>.</p>
+<p><img src="/decisions.jpg#float-right" alt="Oblig meme">
+For most non-trivial problems it becomes important to make good decisions, or our search can run exponentially long trying to find a solution, while also thrashing and unable to prove that no solutions exist. A quick observation is that at any point during the search we are either in a search space that contains a solution, or does not. This distinction, while obvious, can be useful when talking about decision making; i.e., heuristics:</p>
+<ul>
+<li>When search lands <strong>in a subspace that has no solutions, good heuristics let it quickly confirm that no solutions exist</strong>, so that search can move else sooner. Such subspaces are called <em>infeasible</em>.</li>
+<li>When search lands <strong>in a subspace that does have solutions, good heuristics lead search towards those solutions</strong>. These subspaces are called <em>feasible</em>.</li>
+</ul>
+<p>Decisions involve choosing a variable and a live value to try out, and similarly heuristics are commonly viewed as two parts - one type for choosing a variable, and another to choose a value. They are called <em>variable ordering</em> and <em>value ordering</em> heuristics, respectively.</p>
+<h2 id="variable-ordering-heuristics">Variable ordering heuristics</h2>
+<p>Let&rsquo;s glance at the two states search can be in again:</p>
+<ul>
+<li><strong>Subspace contains a solution</strong>: we&rsquo;ll need to assign all variables to get to the solution, but if the one we pick is assigned to a value that doesn&rsquo;t land on a solution, we&rsquo;ll want to prove infeasibility quickly.</li>
+<li><strong>Subspace that does not contain a solution</strong>: we simply want to prove infeasibility quickly.</li>
+</ul>
+<p>Variable ordering heuristics have no control over values, so their goal is simple, how can we determine whether the current subspace has no solutions, quickly? There are a slew of variable ordering heuristics, but the good news is that they all appear to fall under the same category - fail fast. The idea is, we have to pick <em>some</em> variable to assign, and if we are in infeasible space, picking a variable that lets us fail fast is best, as we can move on to another subspace quickly. Interestingly, this principle is adopted elsewhere, like systems design, agile methodologies, and probably a few other things unrelated to CSPs. Back to CSPs and constructive search though: the most basic flavor of this technique is to choose a variable with fewest live values left in its domain, and the rationale is - if we&rsquo;re infeasible, we&rsquo;ll need to try all values, the fewer there are, the faster it will be to eliminate them.</p>
+<p>There are quite a few flavors / improvements upon this most basic &ldquo;fail fast&rdquo; heuristic, so I&rsquo;ll mention a few:</p>
+<ul>
+<li><strong>dom/deg</strong>: in addition to picking the variable with fewest live values, we&rsquo;ll also divide by the number of constraints the variable is involved in. The more constrained the variable, the more likely we are to choose it; the exact formula for picking the next variable is literally # of live values divided by # of constraints the variable is part of, and we pick the unassigned variable that gives the lowest number using this formula.</li>
+<li><strong>dom/ddeg</strong>: similar to the above, but also accounts for dynamic nature of search (&ldquo;ddeg&rdquo; stands for &ldquo;dynamic degree&rdquo;) by only counting constraints that involve unassigned variables (that&rsquo;s a slight oversimplification, see <a href="https://hal.science/hal-03096124/document">this</a> for full details on this and lots more).</li>
+<li><strong>dom/wdeg</strong>: extends dom/ddeg heuristic by also keeping track of when a constraint causes a wipeout of a variable, and using that as part of the evaluation/choosing the variable. For details, again, please refer to proper scientific articles like <a href="https://hal.science/hal-03096124/document">the above</a>. This is the variable ordering heuristic used by my solver.</li>
+</ul>
+<h2 id="value-ordering-heuristics">Value ordering heuristics</h2>
+<p>In my by now rather dated experience (decade plus&hellip; yikes), value ordering heuristics largely only matter when we are in feasible subspace, and their goal is to find the variable assignment that would lead search towards the solution. As many variables may still need to be assigned, another way of framing this is that a good value ordering heuristic will avoid landing us in infeasible search subspaces, which can be expensive to recover from.</p>
+<p>You can see how value ordering heuristics are in some way opposite of variable ordering heuristics - they are more useful when in feasible spaces, and aim to find a solution, so it&rsquo;s not too surprising that for value ordering heuristics to be effective they prefer selecting values that are more likely to succeed first, and defer choosing other values until later. General-purpose value ordering heuristics can achieve this by preferring values that essentially leave the problem least constrained. For classes of problems where estimating complexity of a subproblem can be done efficiently, a good value ordering heuristic can be obtained by preferring values that lead to sub-problems that are most likely to be solvable.</p>
+<p>All that being said, there&rsquo;s a simple and lazy (and somewhat unsatisfying) way out - it&rsquo;s often fastest and simplest to just choose randomly. This tends to outperform other simple heuristics like lexicographic, and could be made deterministic for the sake of reproducibility by seeding the RNG. This is the value ordering heuristic used by my solver, albeit I&rsquo;ve dabbled with specialized ones for crosswords, so far to no avail.</p>
+<h2 id="choosing-the-variable-together-with-the-value">Choosing the variable together with the value?</h2>
+<p><img src="/porque-no-los-dos.jpg#float" alt="&hellip;and one more meme"></p>
+<p>It seems useful to choose both together, rather than separately. I&rsquo;ve not seen this done in CSPs, but I wouldn&rsquo;t be surprised if that happened more recently, or was done with other optimization approaches, like MIP or SAT.</p>
+<p>If you&rsquo;re familiar with this, drop me a note (see social links at the top)!</p>
+<h2 id="lexicographic-ordering">Lexicographic ordering</h2>
+<p>For both kinds of heuristics lexicographic ordering is primarily used to get a predictable and easy to understand run of the solver. That can be nice for basic sanity checking or toy problems, like the 4-queens problem from the <a href="https://blog.dawnofthe.dad/posts/solver-basics/">earlier post</a>. It can also lead to some fun visualizations, like the 100x100 sudoku below, but typically are of little use for hard problems.</p>
+<p><img src="/100x100-sudoku.png" alt="100x100 lexicographically first sudoku">
+This took about 1 hour to generate on my home machine. You can make a smaller one with lexicographic ordering using the <a href="https://dawnofthe.dad/ndoku?lex">the online version</a>, in about a second.</p>
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        <li>
+        
+            <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/"><i class="fa fa-chevron-circle-left"></i> Constraint Propagation</a>
+        
+        </li>
+        <li>
+        
+        </li>
+    </ul>
+</section>
+  
+    
+    
+  
+
+
+
+
+
+</main>
+    <footer>
+        <ul>
+            <li>
+                <h6>
+                    Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a></h6>
+            </li>
+            
+            
+        </ul>
+    </footer>
+</div>
+<script src="/js/scripts.js"></script>
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-WS2FCBYJLF', { 'anonymize_ip': false });
+}
+</script>
+
+
+
+</body>
+
+</html>
+

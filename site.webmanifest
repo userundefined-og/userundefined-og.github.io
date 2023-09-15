@@ -1,6 +1,6 @@
 {
-    "name": "Dawn of the Dad",
-    "short_name": "Dawn of the Dad",
+    "name": "Blog of the Dad",
+    "short_name": "Blog of the Dad",
     "icons": [
         {
             "src": "/android-chrome-36x36.png",
@@ -45,6 +45,6 @@
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "start_url": "https://dawnofthe.dad",
+    "start_url": "https://blog.dawnofthe.dad",
     "display": "standalone"
 }

@@ -1,18 +1,18 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Algorithms - Tag - Blog of the Dad</title>
-        <link>https://blog.dawnofthe.dad/tags/algorithms/</link>
-        <description>Algorithms - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 12 Nov 2023 18:21:01 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/algorithms/" rel="self" type="application/rss+xml" /><item>
-    <title>All Different Variants</title>
-    <link>https://blog.dawnofthe.dad/posts/all-different-variants/</link>
-    <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
+        <title>Constructive Search - Category - Blog of the Dad</title>
+        <link>https://blog.dawnofthe.dad/categories/constructive-search/</link>
+        <description>Constructive Search - Category - Blog of the Dad</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 09 Sep 2023 12:50:58 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="self" type="application/rss+xml" /><item>
+    <title>Visualizing Search</title>
+    <link>https://blog.dawnofthe.dad/posts/visualizing-search/</link>
+    <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/all-different-variants/</guid>
+    </author><guid>https://blog.dawnofthe.dad/posts/visualizing-search/</guid>
     <description><![CDATA[<div class="featured-image">
-                <img src="/spongebob-crossed-eyes.jpg" referrerpolicy="no-referrer">
-            </div>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
-how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution.]]></description>
+                <img src="/ndoku-in-progress.png" referrerpolicy="no-referrer">
+            </div><p>Part of the appeal of building a solver for the fourth time (?!) for me is that it&rsquo;s fun to watch how it solves the problem. While it&rsquo;s possible and quick to hack something up on command line, the results aren&rsquo;t that pretty and can&rsquo;t be easily shared. In this post I&rsquo;ll talk about building a frontend that talks to the backend via websockets and produces an animated visualization of how the search is solving the problem.</p>
+<p>The scope of this post, and my initial frontend, is generalized NxN sudokus, and this first iteration of the frontend focused on largely non-interactive visualization. You can <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">try it out for yourself online</a>. I&rsquo;ll talk about building up more interactive solvers for regular <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku</a> and <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crosswords</a> separately.</p>]]></description>
 </item><item>
     <title>Heuristics</title>
     <link>https://blog.dawnofthe.dad/posts/heuristics/</link>
@@ -38,6 +38,15 @@ how the problems are represented using variables and constraints, how the solver
         <name>Andrei</name>
     </author><guid>https://blog.dawnofthe.dad/posts/search-algo-in-go/</guid>
     <description><![CDATA[<p>My previous couple of posts talked about <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">what the solver does (solves CSPs)</a>, <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">how to model a problem as a CSP, and how the search tree is built</a> as the solver searches for a solution. In this post I will expand on the details of search by outlining the key data structures and bits of code. The backend is written in <a href="https://go.dev" target="_blank" rel="noopener noreferrer">Go lang</a>, and so are all of the code snippets here.</p>]]></description>
+</item><item>
+    <title>Solver basics</title>
+    <link>https://blog.dawnofthe.dad/posts/solver-basics/</link>
+    <pubDate>Sat, 02 Sep 2023 12:49:25 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/solver-basics/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/thinking.png" referrerpolicy="no-referrer">
+            </div><p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
 </item><item>
     <title>Solver intro</title>
     <link>https://blog.dawnofthe.dad/posts/solver-intro/</link>

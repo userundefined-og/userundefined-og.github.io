@@ -1,21 +1,21 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Categories - Category - Blog of the Dad</title>
-        <link>http://localhost:1313/categories/</link>
+        <link>https://blog.dawnofthe.dad/categories/</link>
         <description>Categories - Category - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="http://localhost:1313/categories/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/" rel="self" type="application/rss+xml" /><item>
     <title>Testing</title>
-    <link>http://localhost:1313/categories/testing/</link>
+    <link>https://blog.dawnofthe.dad/categories/testing/</link>
     <pubDate>Sun, 31 Mar 2024 19:38:45 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>http://localhost:1313/categories/testing/</guid>
+    </author><guid>https://blog.dawnofthe.dad/categories/testing/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Constructive Search</title>
-    <link>http://localhost:1313/categories/constructive-search/</link>
+    <link>https://blog.dawnofthe.dad/categories/constructive-search/</link>
     <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>http://localhost:1313/categories/constructive-search/</guid>
+    </author><guid>https://blog.dawnofthe.dad/categories/constructive-search/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

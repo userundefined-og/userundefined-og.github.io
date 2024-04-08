@@ -1,16 +1,16 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Backtracking - Tag - Blog of the Dad</title>
-        <link>https://blog.dawnofthe.dad/tags/backtracking/</link>
+        <link>http://localhost:1313/tags/backtracking/</link>
         <description>Backtracking - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 02 Sep 2023 12:49:25 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/backtracking/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 02 Sep 2023 12:49:25 -0700</lastBuildDate><atom:link href="http://localhost:1313/tags/backtracking/" rel="self" type="application/rss+xml" /><item>
     <title>Solver basics</title>
-    <link>https://blog.dawnofthe.dad/posts/solver-basics/</link>
+    <link>http://localhost:1313/posts/solver-basics/</link>
     <pubDate>Sat, 02 Sep 2023 12:49:25 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/solver-basics/</guid>
+    </author><guid>http://localhost:1313/posts/solver-basics/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/thinking.png" referrerpolicy="no-referrer">
-            </div><p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
+            </div><p>In the <a href="http://localhost:1313/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
 </item></channel>
 </rss>

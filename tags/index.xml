@@ -1,56 +1,56 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Tags - Tag - Blog of the Dad</title>
-        <link>https://blog.dawnofthe.dad/tags/</link>
+        <link>http://localhost:1313/tags/</link>
         <description>Tags - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="http://localhost:1313/tags/" rel="self" type="application/rss+xml" /><item>
     <title>Design</title>
-    <link>https://blog.dawnofthe.dad/tags/design/</link>
+    <link>http://localhost:1313/tags/design/</link>
     <pubDate>Sun, 31 Mar 2024 19:38:45 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/design/</guid>
+    </author><guid>http://localhost:1313/tags/design/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Algorithms</title>
-    <link>https://blog.dawnofthe.dad/tags/algorithms/</link>
+    <link>http://localhost:1313/tags/algorithms/</link>
     <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/algorithms/</guid>
+    </author><guid>http://localhost:1313/tags/algorithms/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Go</title>
-    <link>https://blog.dawnofthe.dad/tags/go/</link>
+    <link>http://localhost:1313/tags/go/</link>
     <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/go/</guid>
+    </author><guid>http://localhost:1313/tags/go/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Backend</title>
-    <link>https://blog.dawnofthe.dad/tags/backend/</link>
+    <link>http://localhost:1313/tags/backend/</link>
     <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/backend/</guid>
+    </author><guid>http://localhost:1313/tags/backend/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Frontend</title>
-    <link>https://blog.dawnofthe.dad/tags/frontend/</link>
+    <link>http://localhost:1313/tags/frontend/</link>
     <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/frontend/</guid>
+    </author><guid>http://localhost:1313/tags/frontend/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Visualization</title>
-    <link>https://blog.dawnofthe.dad/tags/visualization/</link>
+    <link>http://localhost:1313/tags/visualization/</link>
     <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/visualization/</guid>
+    </author><guid>http://localhost:1313/tags/visualization/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Backtracking</title>
-    <link>https://blog.dawnofthe.dad/tags/backtracking/</link>
+    <link>http://localhost:1313/tags/backtracking/</link>
     <pubDate>Sat, 02 Sep 2023 12:49:25 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/backtracking/</guid>
+    </author><guid>http://localhost:1313/tags/backtracking/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

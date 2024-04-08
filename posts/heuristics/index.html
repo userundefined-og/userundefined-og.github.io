@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" /><title>Heuristics - Blog of the Dad</title><meta name="Description" content="Using heuristics to speed up solving of NP-complete CSPs"><meta property="og:title" content="Heuristics" />
 <meta property="og:description" content="Using heuristics to speed up solving of NP-complete CSPs" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.dawnofthe.dad/posts/heuristics/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="http://localhost:1313/posts/heuristics/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-07T17:23:19-07:00" />
 <meta property="article:modified_time" content="2023-09-07T17:23:19-07:00" /><meta property="og:site_name" content="Blog of the Dad" />
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Heuristics"/>
@@ -22,16 +22,16 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-<link rel="canonical" href="https://blog.dawnofthe.dad/posts/heuristics/" /><link rel="prev" href="https://blog.dawnofthe.dad/posts/constraint-propagation/" /><link rel="next" href="https://blog.dawnofthe.dad/posts/visualizing-search/" />
+<link rel="canonical" href="http://localhost:1313/posts/heuristics/" /><link rel="prev" href="http://localhost:1313/posts/constraint-propagation/" /><link rel="next" href="http://localhost:1313/posts/visualizing-search/" />
 <link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "Heuristics",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https://blog.dawnofthe.dad/posts/heuristics/"
+            "@id": "http://localhost:1313/posts/heuristics/"
         },"genre": "posts","keywords":["Algorithms"],"wordcount":  1356 ,
-        "url": "https://blog.dawnofthe.dad/posts/heuristics/","datePublished": "2023-09-07T17:23:19-07:00","dateModified": "2023-09-07T17:23:19-07:00","publisher": {
+        "url": "http://localhost:1313/posts/heuristics/","datePublished": "2023-09-07T17:23:19-07:00","dateModified": "2023-09-07T17:23:19-07:00","publisher": {
             "@type": "Organization",
             "name": "Andrei"},"author": {
                 "@type": "Person",
@@ -63,7 +63,12 @@
     <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="Blog of the Dad">Blog of the Dad</a>
+            <a href="/" title="Blog of the Dad"><img
+        class="logo"
+        loading="lazy"
+        src="android-chrome-192x192.png"
+        srcset="android-chrome-192x192.png, android-chrome-192x192.png 1.5x, android-chrome-192x192.png 2x"
+        title="android-chrome-192x192.png" height="36"   width="36" >Blog of the Dad</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item"
@@ -79,7 +84,12 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="Blog of the Dad">Blog of the Dad</a>
+                <a href="/" title="Blog of the Dad"><img
+        class="logo"
+        loading="lazy"
+        src="android-chrome-192x192.png"
+        srcset="android-chrome-192x192.png, android-chrome-192x192.png 1.5x, android-chrome-192x192.png 2x"
+        title="android-chrome-192x192.png" >Blog of the Dad</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -110,8 +120,7 @@
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title animate__animated animate__flipInX">Heuristics</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                <span class="post-author"><img src="http://localhost:1313/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
             <div class="post-meta-line"><svg class="icon"
@@ -137,7 +146,7 @@
             </div><div class="content" id="content"><p>Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make <em>generally good</em> decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.</p>
 <p>There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work.</p>
 <h2 id="decisions-decisions-" class="headerLink">
-    <a href="#decisions-decisions-" class="header-mark"></a>Decisions, decisions &hellip;</h2><p>You may recall this little bit of code from an <a href="https://blog.dawnofthe.dad/posts/search-algo-in-go/" rel="">earlier post</a> where we covered the search algorithm:</p>
+    <a href="#decisions-decisions-" class="header-mark"></a>Decisions, decisions &hellip;</h2><p>You may recall this little bit of code from an <a href="http://localhost:1313/posts/search-algo-in-go/" rel="">earlier post</a> where we covered the search algorithm:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -146,7 +155,7 @@
 <pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">s</span><span class="p">.</span><span class="nx">current</span><span class="p">.</span><span class="nx">decision</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">makeNextDecision</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>This call to <code>makeNextDecision()</code> is made whenever we enter a new node in the search tree. To give a quick reminder, at this point we may have made other decisions at the ancestor nodes in the search tree and are exploring some subspace of the overall search space. We&rsquo;ll keep making decisions until we either find a solution, or exhaust the possibilities. Also, as another quick reminder, when I say &ldquo;make a decision&rdquo;, I am referring to picking an unassigned variable and a value from its live domain to try next. You can check out the older posts if you need a refresher on <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">live domains, constraint propagation</a> and <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">solver basics in general</a>.</p>
+</div><p>This call to <code>makeNextDecision()</code> is made whenever we enter a new node in the search tree. To give a quick reminder, at this point we may have made other decisions at the ancestor nodes in the search tree and are exploring some subspace of the overall search space. We&rsquo;ll keep making decisions until we either find a solution, or exhaust the possibilities. Also, as another quick reminder, when I say &ldquo;make a decision&rdquo;, I am referring to picking an unassigned variable and a value from its live domain to try next. You can check out the older posts if you need a refresher on <a href="http://localhost:1313/posts/constraint-propagation/" rel="">live domains, constraint propagation</a> and <a href="http://localhost:1313/posts/solver-basics/" rel="">solver basics in general</a>.</p>
 <p><figure><img
         
         loading="lazy"
@@ -192,7 +201,7 @@ For most non-trivial problems it becomes important to make good decisions, or ou
 </ul>
 <p>I&rsquo;ve not seen this done in CSPs, but I wouldn&rsquo;t be surprised if that happened more recently, or was done with other optimization approaches, like MIP or SAT. If you&rsquo;re familiar with this, drop me a note (see social links at the top)!</p>
 <h2 id="lexicographic-ordering" class="headerLink">
-    <a href="#lexicographic-ordering" class="header-mark"></a>Lexicographic ordering</h2><p>For both kinds of heuristics lexicographic ordering is primarily used to get a predictable and easy to understand run of the solver. That can be nice for basic sanity checking or toy problems, like the 4-queens problem from the <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">earlier post</a>. It can also lead to some fun visualizations, like the 100x100 sudoku below, but typically are of little use for hard problems.</p>
+    <a href="#lexicographic-ordering" class="header-mark"></a>Lexicographic ordering</h2><p>For both kinds of heuristics lexicographic ordering is primarily used to get a predictable and easy to understand run of the solver. That can be nice for basic sanity checking or toy problems, like the 4-queens problem from the <a href="http://localhost:1313/posts/solver-basics/" rel="">earlier post</a>. It can also lead to some fun visualizations, like the 100x100 sudoku below, but typically are of little use for hard problems.</p>
 <p><figure><img
         
         loading="lazy"
@@ -255,12 +264,6 @@ This took about 1 hour to generate on my home machine. You can make a smaller on
     
       defer
     
-  ></script><script type="text/javascript">
-            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'G-WS2FCBYJLF');
-        </script><script
-    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
-    async
   ></script></div>
 </body>
 

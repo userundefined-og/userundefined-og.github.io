@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Testing - Category - Blog of the Dad</title>
-        <link>https://blog.dawnofthe.dad/categories/testing/</link>
+        <link>http://localhost:1313/categories/testing/</link>
         <description>Testing - Category - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/testing/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="http://localhost:1313/categories/testing/" rel="self" type="application/rss+xml" /><item>
     <title>Testing</title>
-    <link>https://blog.dawnofthe.dad/posts/testing/</link>
+    <link>http://localhost:1313/posts/testing/</link>
     <pubDate>Sun, 31 Mar 2024 19:38:45 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/testing/</guid>
+    </author><guid>http://localhost:1313/posts/testing/</guid>
     <description><![CDATA[<p>Testing is almost universal in software development, yet it&rsquo;s common to treat it like a chore, or an after thought. Sure, test-driven development (TDD) is a means to influence what the public interface should look like by having the developer pretend the class already exists, and then implementing it to make the tests pass&hellip; but how often is TDD applied? And how often is it applied <em>consistently</em>? What&rsquo;s the magic test-coverage percentage that you (or your lead) are satisfied with, and why that number, in particular? What the heck is &ldquo;shifting left&rdquo;, and how religiously shoud you stick to the test pyramid? Can automated testing happen in production?</p>]]></description>
 </item></channel>
 </rss>

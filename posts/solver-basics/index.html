@@ -1,6 +1,267 @@
-<!doctype html><html lang=en-us><head><title>Solver basics - Blog of the Dad</title>
-<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content=" Blog of the Dad"><meta name=author content="Andrei"><meta property="og:title" content="Solver basics"><meta property="og:description" content="Solving N-queens and NP-complete problems with constructive search"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.dawnofthe.dad/posts/solver-basics/"><meta property="og:image" content="https://blog.dawnofthe.dad/thinking.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-09-02T12:49:25-07:00"><meta property="article:modified_time" content="2023-09-02T12:49:25-07:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.dawnofthe.dad/thinking.png"><meta name=twitter:title content="Solver basics"><meta name=twitter:description content="Solving N-queens and NP-complete problems with constructive search"><meta name=generator content="Hugo 0.124.1"><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=192x192 href=/android-chrome-192x192.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=apple-mobile-web-app-title content="Blog of the Dad"><meta name=application-name content="Blog of the Dad"><meta name=msapplication-TileColor content="#da532c"><meta name=msapplication-TileImage content="/mstile-144x144.png"><meta name=theme-color content="#ffffff"><script src=/js/mathjax-config.js defer></script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin=anonymous><link rel=stylesheet href=https://blog.dawnofthe.dad/fontawesome/css/all.min.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda"><link rel=stylesheet type=text/css href=/css/styles.css></head><body><div id=container><header><h1><a href=/>Blog of the Dad</a></h1><ul id=social-media><li><a href=https://twitter.com/userundefinedrd title=Twitter><i class="fab fa-twitter fa-lg"></i></a></li><li><a href=https://reddit.com/u/userundefined title=Reddit><i class="fab fa-reddit-alien fa-lg"></i></a></li></ul><p><em>Don’t eat me. I have a wife and kids. Eat them.</em></p></header><nav><ul></ul></nav><main><article><h1>Solver basics</h1><aside><ul><li><time class=post-date datetime=2023-09-02T12:49:25-07:00>Sep 2, 2023</time></li><li><em><a href=/tags/backtracking>#Backtracking</a>
-,
-<a href=/tags/constructive-search>#Constructive search</a></em></li><li>7 minute read</li></ul></aside><div class=featured_image><a href=https://blog.dawnofthe.dad/posts/solver-basics/ title="Solver basics"><img src=/thinking.png></a></div><p>In the <a href=https://blog.dawnofthe.dad/posts/solver-intro/>previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p><h2 id=closer-look-at-n-queens-problem>Closer look at N-queens problem</h2><p>To recap the previous post, the goal of solving the N-queens problem is to find a way to place N queens on an NxN chessboard in a way that the queens are not attacking each other. I also mentioned that a common way of modeling this problem is by having over variable per queen, where variable M represents the queen in column M, and this model choice effectively ensures that no pair of queens share the same column. One thing I omitted earlier is that each variable is also associated with its <em>domain</em>, which is basically the set of values that could be assigned to the variable. For N-queens the domain of all variables is {1, &mldr;, N}. A value from this domain simply represents the row, from 1 to N, that a particular queen is assigned to.</p><p>Constraints for N-queens get a little bit more interesting: by the definition of variables we know that no pair of queens will attack each other vertically, since they cannot share the same column, but we still need to make sure they will not attack each other horizontally and diagonally.</p><ul><li><strong>Preventing horizontal attacks</strong> is the same thing as making sure that each queen is assigned to a different row, and this is a perfect example of applying the <em>all-different</em> constraint. There are different ways of implementing such a constraint, but the net outcome is the same - all variables that are part of such a constraint must be assigned to different values. So we&rsquo;ll define one <em>all-different</em> constraint and apply it to all of the 4 queens, as this prevents them from horizontally attacking each other.</li><li><strong>Preventing diagonal attacks</strong> will require doing a bit of math to define the constraint: we know that a pair of queens share a diagonal if we can draw a line between them with a slope of 1 or -1, and we want to prevent that. Using the &ldquo;rise over run&rdquo; formula we can express that as $$abs((y_2-y_1) / (x_2 - x_1)) \ne 1$$ Let&rsquo;s get rid of division, because dealing with floats is not fun: $$abs(y_2 - y_1) \ne abs(x_2-x_1)$$ With that, we just need to add constraints for each pair of queens, so that gives us $${n \choose 2} = n(n-1)/2$$ binary constraints.</li></ul><p>This completes the definition of an N-queens problem.</p><h2 id=search-and-n-queens>Search and N-queens</h2><p>Now that we&rsquo;ve defined the N-queens problem, let&rsquo;s see what searching for a solution looks like. We&rsquo;ll look at the smallest non-trivial N-queens problem with a solution, which happens to be with 4 queens.</p><p>There are a couple more things to mention about search:</p><ul><li>Making the right decisions during search is critical. For this, typically two types of heuristics are used: <em>variable ordering heuristics</em>, which I mentioned in the previous post, and <em>value ordering heuristics</em>. They tell search which variable to assign next, and to what value. Here we&rsquo;ll assume that both are using lexicographic ordering, meaning we&rsquo;ll assign queen in column 1 first (call it Q1), then in columns 2, 3 and finally 4. We&rsquo;ll do the same for values; i.e., rows that we assign the queens to.</li><li>The other thing done during search is called <em>constraint propagation</em>, which basically says &ldquo;after search assigns a value, it will proactively adjust other unassigned variables by removing values that would break a constraint&rdquo;. That might sound a bit complicated, so for now, we&rsquo;ll assume that we don&rsquo;t do this, and only evaluate constraints when picking the next value.</li></ul><p>We can now look at the example search for the 4-queens problem:</p><p><img src=/4q-tree.svg alt="Search tree for the 4 queens problem"></p><p>In the diagram above, labels next to nodes represent the decision made to reach the node (aside from root node); e.g.; &ldquo;Q2:3&rdquo; means &ldquo;assign queen in column #2 to row 3&rdquo;. Because we are using lexicographic variable ordering you&rsquo;ll also note that each level in the tree corresponds to assigning the next queen. In cases where we find it impossible to assign a value to the next queen without violating a constraint, we&rsquo;ll label those with &ldquo;X&rdquo;; e.g., &ldquo;Q4:X&rdquo; means &ldquo;we couldn&rsquo;t place queen in column 4 as every possible spot is already under attack&rdquo;. Those are always followed by a backtrack.</p><h3 id=explaining-search-steps>Explaining search steps</h3><ul><li>Start with no decisions made at the root of the search tree.</li><li>Assign Q1 to 1; i.e., to place queen in column #1 on row #1. Then create a new child node and step into it.</li><li>Now we&rsquo;ll assign Q2. Placement of Q1 means that Q2 cannot be on row #1 (horizontal constraint, aka all different constraint, is violated) or on row #2 (diagonal constraint is violated). So we&rsquo;ll place it on row #3, create another child node, and step into it.</li><li>Now we&rsquo;re <em>attempting</em> to assign Q3. This is where things get more interesting: row #1 is under attack by Q1, and rows #2 through #4 are under attack by Q2. No decision can be made and we&rsquo;ve hit a dead end. This is where <em>backtracking</em> must take place, which basically means going back to the parent of the current node and stating that the decision it made earlier leads to no solutions. This is the leftmost leaf node with an X on it in the diagram.</li><li>We&rsquo;re now back to finding a new value for Q2, as assigning it to row #3 didn&rsquo;t work. Search will try row #4, and, as usual, create a child node for that and step into it.</li><li>We&rsquo;re trying to assign Q3 again. Row #1 is still under attack by Q1, however, now that we&rsquo;ve moved Q2 to row #4, Q3 can go on row #2. We&rsquo;ll make this decision, create a new child node, and step into that.</li><li>We&rsquo;re now down to our last queen - Q4! Alas, looking for a viable place to put it we&rsquo;ll see that row #1 is taken by Q1, row #2 by Q3, row #3 is under attack diagonally by Q3, and row #4 is already taken by Q2. We cannot place Q4 without attacking one of the other queens, and we must backtrack.</li><li>Q3 must be moved from row #2, but it has nowhere else to go - we can&rsquo;t place it on row #3 because Q1 attacks that diagonally, and #4 is already under attack by Q2. We must backtrack again.</li><li>Q2 must now be moved from row #4, but Q2 has exhausted possible places it could be placed, so we backtrack once again, and end up at the root node.</li><li>After all that work we learned that Q1 cannot be on row #1 and we&rsquo;re back at the root node. We must try the next value, row #2, create a new child and step into it. Thankfully, the rest of the search is backtrack-free.</li><li>Q2 can only be on row #4 because Q1 attacks all others. So we place it, create a new child and step into that.</li><li>Q3 can only be on row #1 now. We do that, and create a new child + step into that again.</li><li>Q4 is last, and luckily it can be placed on row #3. All the variables are now assigned and none of the constraints are violated, and thus we have a solution!</li></ul><p>Side-note: my solver always makes binary decisions, so the logic would have been more like &ldquo;try X, and if that fails, try <em>not</em> X&rdquo;. The net result would still be the same, but we would have a few more nodes in the search tree. I&rsquo;ll cover the more exact mechanics of my solver separately.</p><h2 id=summary>Summary</h2><p>We&rsquo;ve looked at how N-queens problem can be modeled as a constraint satisfaction problem, and how search traverses the search space by incrementally building up a search tree. We saw how the constraints prevent us from visiting parts of the tree that have no solutions, and how we recover from failure to find a solution in subtrees.</p></article><section class=post-nav><ul><li><a href=https://blog.dawnofthe.dad/posts/solver-intro/><i class="fa fa-chevron-circle-left"></i> Solver intro</a></li><li><a href=https://blog.dawnofthe.dad/posts/search-algo-in-go/>Search Algo in Go <i class="fa fa-chevron-circle-right"></i></a></li></ul></section></main><footer><ul><li><h6>Rendered by
-<a href=https://gohugo.io title=Hugo>Hugo</a> and based on a fork of the <a href=https://themes.gohugo.io/themes/hugo-kiera/>Kiera theme</a> |
-<link href=/feed.xml type=application/atom+xml rel=alternate title="Blog of the Dad"><a href=https://blog.dawnofthe.dad/index.xml>Subscribe</a></h6></li></ul></footer></div><script src=/js/scripts.js></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-WS2FCBYJLF",{anonymize_ip:!1})}</script></body></html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" /><title>Solver basics - Blog of the Dad</title><meta name="Description" content="Solving N-queens and NP-complete problems with constructive search"><meta property="og:title" content="Solver basics" />
+<meta property="og:description" content="Solving N-queens and NP-complete problems with constructive search" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.dawnofthe.dad/posts/solver-basics/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-02T12:49:25-07:00" />
+<meta property="article:modified_time" content="2023-09-02T12:49:25-07:00" /><meta property="og:site_name" content="Blog of the Dad" />
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Solver basics"/>
+<meta name="twitter:description" content="Solving N-queens and NP-complete problems with constructive search"/>
+      <meta name="twitter:site" content="@userundefinedrd"/>
+<meta name="application-name" content="Blog of the Dad">
+<meta name="apple-mobile-web-app-title" content="Blog of the Dad">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="twitter:creator" content="@userundefinedrd" /><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<link rel="canonical" href="https://blog.dawnofthe.dad/posts/solver-basics/" /><link rel="prev" href="https://blog.dawnofthe.dad/posts/solver-intro/" /><link rel="next" href="https://blog.dawnofthe.dad/posts/search-algo-in-go/" />
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+        "headline": "Solver basics",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://blog.dawnofthe.dad/posts/solver-basics/"
+        },"image": ["https://blog.dawnofthe.dad/thinking.png"],"genre": "posts","keywords":["Backtracking","Constructive search"],"wordcount":  1368 ,
+        "url": "https://blog.dawnofthe.dad/posts/solver-basics/","datePublished": "2023-09-02T12:49:25-07:00","dateModified": "2023-09-02T12:49:25-07:00","publisher": {
+            "@type": "Organization",
+            "name": "Andrei"},"author": {
+                "@type": "Person",
+                "name": "Andrei",
+                "url": "/"
+            },"description": "Solving N-queens and NP-complete problems with constructive search"
+    }</script></head>
+
+<body header-desktop="" header-mobile=""><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('' === 'light' || '' === 'dark' || '' === 'black') setTheme(''), saveTheme(''); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Blog of the Dad">Blog of the Dad</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > Posts </a><a class="menu-item"
+                    href="/tags/" > Tags </a><a class="menu-item"
+                    href="/categories/" > Categories </a><span class="menu-item delimiter"></span><button class="menu-item theme-switch" aria-label="Switch Theme">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                </button></div>
+        </div>
+    </div>
+</header><header class="mobile print:!tw-hidden" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Blog of the Dad">Blog of the Dad</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="" >Posts</a><a class="menu-item" href="/tags/" title="" >Tags</a><a class="menu-item" href="/categories/" title="" >Categories</a><button class="menu-item theme-switch tw-w-full" aria-label="Switch Theme">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+            </button></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+            <div class="container"><div class="toc print:!tw-hidden" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#closer-look-at-n-queens-problem">Closer look at N-queens problem</a></li>
+    <li><a href="#search-and-n-queens">Search and N-queens</a>
+      <ul>
+        <li><a href="#explaining-search-steps">Explaining search steps</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title animate__animated animate__flipInX">Solver basics</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                </span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2023-09-02">2023-09-02</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-09-02">2023-09-02</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1368 words&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;7 minutes&nbsp;</div>
+        </div><div class="featured-image"><img
+        
+        loading="eager"
+        src="/thinking.png"
+        srcset="/thinking.png, /thinking.png 1.5x, /thinking.png 2x"
+        title="Solving N-queens and NP-complete problems with constructive search" ></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#closer-look-at-n-queens-problem">Closer look at N-queens problem</a></li>
+    <li><a href="#search-and-n-queens">Search and N-queens</a>
+      <ul>
+        <li><a href="#explaining-search-steps">Explaining search steps</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>
+<h2 id="closer-look-at-n-queens-problem" class="headerLink">
+    <a href="#closer-look-at-n-queens-problem" class="header-mark"></a>Closer look at N-queens problem</h2><p>To recap the previous post, the goal of solving the N-queens problem is to find a way to place N queens on an NxN chessboard in a way that the queens are not attacking each other. I also mentioned that a common way of modeling this problem is by having over variable per queen, where variable M represents the queen in column M, and this model choice effectively ensures that no pair of queens share the same column. One thing I omitted earlier is that each variable is also associated with its <em>domain</em>, which is basically the set of values that could be assigned to the variable. For N-queens the domain of all variables is {1, &hellip;, N}. A value from this domain simply represents the row, from 1 to N, that a particular queen is assigned to.</p>
+<p>Constraints for N-queens get a little bit more interesting: by the definition of variables we know that no pair of queens will attack each other vertically, since they cannot share the same column, but we still need to make sure they will not attack each other horizontally and diagonally.</p>
+<ul>
+<li><strong>Preventing horizontal attacks</strong> is the same thing as making sure that each queen is assigned to a different row, and this is a perfect example of applying the <em>all-different</em> constraint. There are different ways of implementing such a constraint, but the net outcome is the same - all variables that are part of such a constraint must be assigned to different values. So we&rsquo;ll define one <em>all-different</em> constraint and apply it to all of the 4 queens, as this prevents them from horizontally attacking each other.</li>
+<li><strong>Preventing diagonal attacks</strong> will require doing a bit of math to define the constraint: we know that a pair of queens share a diagonal if we can draw a line between them with a slope of 1 or -1, and we want to prevent that. Using the &ldquo;rise over run&rdquo; formula we can express that as $$abs((y_2-y_1) / (x_2 - x_1)) \ne 1$$ Let&rsquo;s get rid of division, because dealing with floats is not fun: $$abs(y_2 - y_1) \ne abs(x_2-x_1)$$ With that, we just need to add constraints for each pair of queens, so that gives us $${n \choose 2} = n(n-1)/2$$ binary constraints.</li>
+</ul>
+<p>This completes the definition of an N-queens problem.</p>
+<h2 id="search-and-n-queens" class="headerLink">
+    <a href="#search-and-n-queens" class="header-mark"></a>Search and N-queens</h2><p>Now that we&rsquo;ve defined the N-queens problem, let&rsquo;s see what searching for a solution looks like. We&rsquo;ll look at the smallest non-trivial N-queens problem with a solution, which happens to be with 4 queens.</p>
+<p>There are a couple more things to mention about search:</p>
+<ul>
+<li>Making the right decisions during search is critical. For this, typically two types of heuristics are used: <em>variable ordering heuristics</em>, which I mentioned in the previous post, and <em>value ordering heuristics</em>. They tell search which variable to assign next, and to what value. Here we&rsquo;ll assume that both are using lexicographic ordering, meaning we&rsquo;ll assign queen in column 1 first (call it Q1), then in columns 2, 3 and finally 4. We&rsquo;ll do the same for values; i.e., rows that we assign the queens to.</li>
+<li>The other thing done during search is called <em>constraint propagation</em>, which basically says &ldquo;after search assigns a value, it will proactively adjust other unassigned variables by removing values that would break a constraint&rdquo;. That might sound a bit complicated, so for now, we&rsquo;ll assume that we don&rsquo;t do this, and only evaluate constraints when picking the next value.</li>
+</ul>
+<p>We can now look at the example search for the 4-queens problem:</p>
+<p><figure><img
+        
+        loading="lazy"
+        src="/4q-tree.svg"
+        srcset="/4q-tree.svg, /4q-tree.svg 1.5x, /4q-tree.svg 2x"
+        title="Search tree for the 4 queens problem" ></figure></p>
+<p>In the diagram above, labels next to nodes represent the decision made to reach the node (aside from root node); e.g.; &ldquo;Q2:3&rdquo; means &ldquo;assign queen in column #2 to row 3&rdquo;. Because we are using lexicographic variable ordering you&rsquo;ll also note that each level in the tree corresponds to assigning the next queen. In cases where we find it impossible to assign a value to the next queen without violating a constraint, we&rsquo;ll label those with &ldquo;X&rdquo;; e.g., &ldquo;Q4:X&rdquo; means &ldquo;we couldn&rsquo;t place queen in column 4 as every possible spot is already under attack&rdquo;. Those are always followed by a backtrack.</p>
+<h3 id="explaining-search-steps" class="headerLink">
+    <a href="#explaining-search-steps" class="header-mark"></a>Explaining search steps</h3><ul>
+<li>Start with no decisions made at the root of the search tree.</li>
+<li>Assign Q1 to 1; i.e., to place queen in column #1 on row #1. Then create a new child node and step into it.</li>
+<li>Now we&rsquo;ll assign Q2. Placement of Q1 means that Q2 cannot be on row #1 (horizontal constraint, aka all different constraint, is violated) or on row #2 (diagonal constraint is violated). So we&rsquo;ll place it on row #3, create another child node, and step into it.</li>
+<li>Now we&rsquo;re <em>attempting</em> to assign Q3. This is where things get more interesting: row #1 is under attack by Q1, and rows #2 through #4 are under attack by Q2. No decision can be made and we&rsquo;ve hit a dead end. This is where <em>backtracking</em> must take place, which basically means going back to the parent of the current node and stating that the decision it made earlier leads to no solutions. This is the leftmost leaf node with an X on it in the diagram.</li>
+<li>We&rsquo;re now back to finding a new value for Q2, as assigning it to row #3 didn&rsquo;t work. Search will try row #4, and, as usual, create a child node for that and step into it.</li>
+<li>We&rsquo;re trying to assign Q3 again. Row #1 is still under attack by Q1, however, now that we&rsquo;ve moved Q2 to row #4, Q3 can go on row #2. We&rsquo;ll make this decision, create a new child node, and step into that.</li>
+<li>We&rsquo;re now down to our last queen - Q4! Alas, looking for a viable place to put it we&rsquo;ll see that row #1 is taken by Q1, row #2 by Q3, row #3 is under attack diagonally by Q3, and row #4 is already taken by Q2. We cannot place Q4 without attacking one of the other queens, and we must backtrack.</li>
+<li>Q3 must be moved from row #2, but it has nowhere else to go - we can&rsquo;t place it on row #3 because Q1 attacks that diagonally, and #4 is already under attack by Q2. We must backtrack again.</li>
+<li>Q2 must now be moved from row #4, but Q2 has exhausted possible places it could be placed, so we backtrack once again, and end up at the root node.</li>
+<li>After all that work we learned that Q1 cannot be on row #1 and we&rsquo;re back at the root node. We must try the next value, row #2, create a new child and step into it. Thankfully, the rest of the search is backtrack-free.</li>
+<li>Q2 can only be on row #4 because Q1 attacks all others. So we place it, create a new child and step into that.</li>
+<li>Q3 can only be on row #1 now. We do that, and create a new child + step into that again.</li>
+<li>Q4 is last, and luckily it can be placed on row #3. All the variables are now assigned and none of the constraints are violated, and thus we have a solution!</li>
+</ul>
+<p>Side-note: my solver always makes binary decisions, so the logic would have been more like &ldquo;try X, and if that fails, try <em>not</em> X&rdquo;. The net result would still be the same, but we would have a few more nodes in the search tree. I&rsquo;ll cover the more exact mechanics of my solver separately.</p>
+<h2 id="summary" class="headerLink">
+    <a href="#summary" class="header-mark"></a>Summary</h2><p>We&rsquo;ve looked at how N-queens problem can be modeled as a constraint satisfaction problem, and how search traverses the search space by incrementally building up a search tree. We saw how the constraints prevent us from visiting parts of the tree that have no solutions, and how we recover from failure to find a solution in subtrees.</p></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2023-09-02</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line print:!tw-hidden">
+            <div class="post-info-md"></div>
+            <div class="post-info-share"></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/backtracking/">Backtracking</a>,&nbsp;<a href="/tags/constructive-search/">Constructive Search</a></section>
+        <section class="print:!tw-hidden">
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav print:tw-hidden"><a href="/posts/solver-intro/" class="prev" rel="prev" title="Solver intro"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>Solver intro</a>
+            <a href="/posts/search-algo-in-go/" class="next" rel="next" title="Search Algo in Go">Search Algo in Go<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></a></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.124.1">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.4.0"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg> DoIt</a>
+                </div><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2024<span class="author">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">Andrei</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="Back to Top">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
+        </a>
+    </div><div class="assets"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script
+    src="/lib/clipboard/clipboard.min.js"
+    
+  ></script><script
+    src="/lib/katex/katex.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/katex/auto-render.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/katex.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-WS2FCBYJLF');
+        </script><script
+    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
+    async
+  ></script></div>
+</body>
+
+</html>

@@ -1,21 +1,21 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Design - Tag - Blog of the Dad</title>
-        <link>http://localhost:1313/tags/design/</link>
+        <link>https://blog.dawnofthe.dad/tags/design/</link>
         <description>Design - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="http://localhost:1313/tags/design/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/design/" rel="self" type="application/rss+xml" /><item>
     <title>Testing</title>
-    <link>http://localhost:1313/posts/testing/</link>
+    <link>https://blog.dawnofthe.dad/posts/testing/</link>
     <pubDate>Sun, 31 Mar 2024 19:38:45 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>http://localhost:1313/posts/testing/</guid>
+    </author><guid>https://blog.dawnofthe.dad/posts/testing/</guid>
     <description><![CDATA[<p>Testing is almost universal in software development, yet it&rsquo;s common to treat it like a chore, or an after thought. Sure, test-driven development (TDD) is a means to influence what the public interface should look like by having the developer pretend the class already exists, and then implementing it to make the tests pass&hellip; but how often is TDD applied? And how often is it applied <em>consistently</em>? What&rsquo;s the magic test-coverage percentage that you (or your lead) are satisfied with, and why that number, in particular? What the heck is &ldquo;shifting left&rdquo;, and how religiously shoud you stick to the test pyramid? Can automated testing happen in production?</p>]]></description>
 </item><item>
     <title>Rubber Duck FTW</title>
-    <link>http://localhost:1313/posts/rubber-duck-ftw/</link>
+    <link>https://blog.dawnofthe.dad/posts/rubber-duck-ftw/</link>
     <pubDate>Thu, 21 Sep 2023 22:16:25 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>http://localhost:1313/posts/rubber-duck-ftw/</guid>
+    </author><guid>https://blog.dawnofthe.dad/posts/rubber-duck-ftw/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/duck.jpg" referrerpolicy="no-referrer">
             </div><p>Rubber duck debugging is a well known debugging technique - it boils down to explaining the code to a rubber duck, whether a real one, or a coworker who unwittingly becomes the &ldquo;rubber duck&rdquo;. Halfway through the explanation the &ldquo;Wait &hellip; what?&rdquo; moment pops up, you know where the bug is and you run off to fix it, potentially leaving your coworker wondering why you just ran off mid-sentence.</p>

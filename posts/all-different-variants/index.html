@@ -3,14 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" /><title>All Different Variants - Blog of the Dad</title><meta name="Description" content="Technical website about dawnofthe.dad and the like"><meta property="og:title" content="All Different Variants" />
 <meta property="og:description" content="In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
 how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://localhost:1313/posts/all-different-variants/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://blog.dawnofthe.dad/posts/all-different-variants/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-11-12T18:21:01-08:00" />
 <meta property="article:modified_time" content="2023-11-12T18:21:01-08:00" /><meta property="og:site_name" content="Blog of the Dad" />
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="All Different Variants"/>
@@ -24,16 +24,16 @@ how the problems are represented using variables and constraints, how the solver
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-<link rel="canonical" href="http://localhost:1313/posts/all-different-variants/" /><link rel="prev" href="http://localhost:1313/posts/rubber-duck-ftw/" /><link rel="next" href="http://localhost:1313/posts/testing/" />
+<link rel="canonical" href="https://blog.dawnofthe.dad/posts/all-different-variants/" /><link rel="prev" href="https://blog.dawnofthe.dad/posts/rubber-duck-ftw/" /><link rel="next" href="https://blog.dawnofthe.dad/posts/testing/" />
 <link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "All Different Variants",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http://localhost:1313/posts/all-different-variants/"
-        },"image": ["http://localhost:1313/spongebob-crossed-eyes.jpg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  2843 ,
-        "url": "http://localhost:1313/posts/all-different-variants/","datePublished": "2023-11-12T18:21:01-08:00","dateModified": "2023-11-12T18:21:01-08:00","publisher": {
+            "@id": "https://blog.dawnofthe.dad/posts/all-different-variants/"
+        },"image": ["https://blog.dawnofthe.dad/spongebob-crossed-eyes.jpg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  2843 ,
+        "url": "https://blog.dawnofthe.dad/posts/all-different-variants/","datePublished": "2023-11-12T18:21:01-08:00","dateModified": "2023-11-12T18:21:01-08:00","publisher": {
             "@type": "Organization",
             "name": "Andrei"},"author": {
                 "@type": "Person",
@@ -142,7 +142,7 @@ how the problems are represented using variables and constraints, how the solver
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title animate__animated animate__flipInX">All Different Variants</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img src="http://localhost:1313/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                <span class="post-author"><img src="https://blog.dawnofthe.dad/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
             <div class="post-meta-line"><svg class="icon"
@@ -198,7 +198,7 @@ how the problems are represented using variables and constraints, how the solver
 </ul>
 <p>In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution. In particular, I&rsquo;ll talk about different ways of implementing the <em>all-different</em> constraint, and look at the various implementations&rsquo; performance characteristics.</p>
 <h2 id="choices-choices" class="headerLink">
-    <a href="#choices-choices" class="header-mark"></a>Choices, choices&hellip;</h2><p>An interesting thing about CSPs is that for a given problem type there is often more than one way to model it. For example, when I spoke about <a href="http://localhost:1313/posts/solver-basics/" rel="">modeling the N-queens problem</a> I said that one way to prevent queens from attacking each other diagonally is to ensure that if any pair of queens are connected by a line the slope of that line isn&rsquo;t 1 or -1. Another way to achieve the same result is to enumerate diagonals of the NxN chessboard, and make sure that all queens are assigned to different diagonals (each queen will claim two diagonals - one from bottom left to top right and another from top left to bottom right). Both representations are totally valid, but the performance of search will vary depending on how the problem is modeled, and how the underlying constraints are implemented.</p>
+    <a href="#choices-choices" class="header-mark"></a>Choices, choices&hellip;</h2><p>An interesting thing about CSPs is that for a given problem type there is often more than one way to model it. For example, when I spoke about <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">modeling the N-queens problem</a> I said that one way to prevent queens from attacking each other diagonally is to ensure that if any pair of queens are connected by a line the slope of that line isn&rsquo;t 1 or -1. Another way to achieve the same result is to enumerate diagonals of the NxN chessboard, and make sure that all queens are assigned to different diagonals (each queen will claim two diagonals - one from bottom left to top right and another from top left to bottom right). Both representations are totally valid, but the performance of search will vary depending on how the problem is modeled, and how the underlying constraints are implemented.</p>
 <p>In fact, the &ldquo;all diagonals must be different&rdquo; constraint can be implemented by having binary constraints, one for each pair of queens, that ensure that the queens don&rsquo;t each other diagonally, which is exactly how I&rsquo;ve described the problem originally. Importantly though, the all-different constraint could be implemented very differently.</p>
 <h2 id="all-different-constraint" class="headerLink">
     <a href="#all-different-constraint" class="header-mark"></a>All different constraint</h2><p>Before getting too far ahead, let&rsquo;s formally define what an <em>all-different</em> constraint means. Recall that a CSP itself is composed of variables, each with a domain of possible values, and constraints on those variables. An <em>all-different</em> constraint may defined on any subset of variables of the overall problem, and it is satisfied if the following condition is true:
@@ -220,7 +220,7 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>When the solver applies constraint propagation it checks constraints by iterating over its <code>Variables()</code> and checking whether the remaining values in each of the variable&rsquo;s live domains are still <code>Supported()</code> by the constraint. When they are not, they are removed as no solution can exist with that variable-value assignment. You can see how constraint propagation works in the <a href="http://localhost:1313/posts/constraint-propagation/" rel="">earlier post</a>.</p>
+</div><p>When the solver applies constraint propagation it checks constraints by iterating over its <code>Variables()</code> and checking whether the remaining values in each of the variable&rsquo;s live domains are still <code>Supported()</code> by the constraint. When they are not, they are removed as no solution can exist with that variable-value assignment. You can see how constraint propagation works in the <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">earlier post</a>.</p>
 <h2 id="all-different-constraint-implementations" class="headerLink">
     <a href="#all-different-constraint-implementations" class="header-mark"></a>All-different constraint implementations</h2><p>There are many ways to enforce this constraint. Let&rsquo;s look at a bunch.</p>
 <h3 id="binary" class="headerLink">
@@ -400,7 +400,7 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 <h2 id="comparing-performance" class="headerLink">
     <a href="#comparing-performance" class="header-mark"></a>Comparing performance</h2><p>Cool, so we&rsquo;ve got the implementations. We know that ultimately they&rsquo;ll all give us to a valid sudoku, but what is their performance like? Let&rsquo;s look!</p>
 <h3 id="the-setup" class="headerLink">
-    <a href="#the-setup" class="header-mark"></a>The setup</h3><p>We&rsquo;ll be looking at generalized NxN sudokus, as they are effectively one big glob of variables, one per sudoku cell, and <em>all-different</em> constraints enforcing horizontal, vertical and block uniqueness. We&rsquo;ll search for the first, randomly encountered solution, and to do so we&rsquo;ll be using a solver with randomized variable and value ordering <a href="http://localhost:1313/posts/heuristics/" rel="">heuristics</a> and apply <a href="http://localhost:1313/posts/constraint-propagation/" rel="">forward checking</a> after every assignment. We&rsquo;ll be looking at sudokus of sizes 16x16, 25x25 and 36x36. You can also try most of these <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">online</a>.</p>
+    <a href="#the-setup" class="header-mark"></a>The setup</h3><p>We&rsquo;ll be looking at generalized NxN sudokus, as they are effectively one big glob of variables, one per sudoku cell, and <em>all-different</em> constraints enforcing horizontal, vertical and block uniqueness. We&rsquo;ll search for the first, randomly encountered solution, and to do so we&rsquo;ll be using a solver with randomized variable and value ordering <a href="https://blog.dawnofthe.dad/posts/heuristics/" rel="">heuristics</a> and apply <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">forward checking</a> after every assignment. We&rsquo;ll be looking at sudokus of sizes 16x16, 25x25 and 36x36. You can also try most of these <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">online</a>.</p>
 <p>We&rsquo;ll cover two basic metrics - time taken by the solver, and the number of steps the solver took, to reach the first solution. End users will typically only care about the time taken, but the number of steps can give us some insights into how our constraints work.</p>
 <p>We&rsquo;ll be using Go&rsquo;s benchmarking tests to evaluate performance of these implementations. Here&rsquo;s what this benchmark/test looks like:</p>
 <div class="highlight"><div class="chroma">
@@ -676,6 +676,12 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
     
       defer
     
+  ></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-WS2FCBYJLF');
+        </script><script
+    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
+    async
   ></script></div>
 </body>
 

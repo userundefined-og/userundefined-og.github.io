@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Backend - Tag - Blog of the Dad</title>
-        <link>http://localhost:1313/tags/backend/</link>
+        <link>https://blog.dawnofthe.dad/tags/backend/</link>
         <description>Backend - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 09 Sep 2023 12:50:58 -0700</lastBuildDate><atom:link href="http://localhost:1313/tags/backend/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 09 Sep 2023 12:50:58 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/backend/" rel="self" type="application/rss+xml" /><item>
     <title>Visualizing Search</title>
-    <link>http://localhost:1313/posts/visualizing-search/</link>
+    <link>https://blog.dawnofthe.dad/posts/visualizing-search/</link>
     <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>http://localhost:1313/posts/visualizing-search/</guid>
+    </author><guid>https://blog.dawnofthe.dad/posts/visualizing-search/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/ndoku-in-progress.png" referrerpolicy="no-referrer">
             </div><p>Part of the appeal of building a solver for the fourth time (?!) for me is that it&rsquo;s fun to watch how it solves the problem. While it&rsquo;s possible and quick to hack something up on command line, the results aren&rsquo;t that pretty and can&rsquo;t be easily shared. In this post I&rsquo;ll talk about building a frontend that talks to the backend via websockets and produces an animated visualization of how the search is solving the problem.</p>

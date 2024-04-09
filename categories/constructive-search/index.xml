@@ -1,68 +1,68 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Constructive Search - Category - Blog of the Dad</title>
-        <link>https://blog.dawnofthe.dad/categories/constructive-search/</link>
+        <link>http://localhost:1313/categories/constructive-search/</link>
         <description>Constructive Search - Category - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 12 Nov 2023 18:21:01 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 12 Nov 2023 18:21:01 -0800</lastBuildDate><atom:link href="http://localhost:1313/categories/constructive-search/" rel="self" type="application/rss+xml" /><item>
     <title>All Different Variants</title>
-    <link>https://blog.dawnofthe.dad/posts/all-different-variants/</link>
+    <link>http://localhost:1313/posts/all-different-variants/</link>
     <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/all-different-variants/</guid>
+    </author><guid>http://localhost:1313/posts/all-different-variants/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/spongebob-crossed-eyes.jpg" referrerpolicy="no-referrer">
             </div>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
 how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution.]]></description>
 </item><item>
     <title>Visualizing Search</title>
-    <link>https://blog.dawnofthe.dad/posts/visualizing-search/</link>
+    <link>http://localhost:1313/posts/visualizing-search/</link>
     <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/visualizing-search/</guid>
+    </author><guid>http://localhost:1313/posts/visualizing-search/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/ndoku-in-progress.png" referrerpolicy="no-referrer">
             </div><p>Part of the appeal of building a solver for the fourth time (?!) for me is that it&rsquo;s fun to watch how it solves the problem. While it&rsquo;s possible and quick to hack something up on command line, the results aren&rsquo;t that pretty and can&rsquo;t be easily shared. In this post I&rsquo;ll talk about building a frontend that talks to the backend via websockets and produces an animated visualization of how the search is solving the problem.</p>
 <p>The scope of this post, and my initial frontend, is generalized NxN sudokus, and this first iteration of the frontend focused on largely non-interactive visualization. You can <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">try it out for yourself online</a>. I&rsquo;ll talk about building up more interactive solvers for regular <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku</a> and <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crosswords</a> separately.</p>]]></description>
 </item><item>
     <title>Heuristics</title>
-    <link>https://blog.dawnofthe.dad/posts/heuristics/</link>
+    <link>http://localhost:1313/posts/heuristics/</link>
     <pubDate>Thu, 07 Sep 2023 17:23:19 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/heuristics/</guid>
+    </author><guid>http://localhost:1313/posts/heuristics/</guid>
     <description><![CDATA[<p>Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make <em>generally good</em> decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.</p>
 <p>There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work.</p>]]></description>
 </item><item>
     <title>Constraint Propagation</title>
-    <link>https://blog.dawnofthe.dad/posts/constraint-propagation/</link>
+    <link>http://localhost:1313/posts/constraint-propagation/</link>
     <pubDate>Mon, 04 Sep 2023 15:59:06 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/constraint-propagation/</guid>
+    </author><guid>http://localhost:1313/posts/constraint-propagation/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/4q-prop.svg" referrerpolicy="no-referrer">
             </div><p>Constraint propagation is one of the key mechanisms that allows constructive search to efficiently explore huge search spaces. It does so by applying constraints whenever search state changes to remove parts of search space that cannot contain solutions.</p>
 <p>In this post I&rsquo;ll cover two constraint propagation techniques: forward checking and arc consistency. As these techniques apply to variables&rsquo; live domains, I&rsquo;ll start by defining what that is first, and then dive into constraint propagation itself.</p>]]></description>
 </item><item>
     <title>Search Algo in Go</title>
-    <link>https://blog.dawnofthe.dad/posts/search-algo-in-go/</link>
+    <link>http://localhost:1313/posts/search-algo-in-go/</link>
     <pubDate>Sun, 03 Sep 2023 10:24:10 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/search-algo-in-go/</guid>
-    <description><![CDATA[<p>My previous couple of posts talked about <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">what the solver does (solves CSPs)</a>, <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">how to model a problem as a CSP, and how the search tree is built</a> as the solver searches for a solution. In this post I will expand on the details of search by outlining the key data structures and bits of code. The backend is written in <a href="https://go.dev" target="_blank" rel="noopener noreferrer">Go lang</a>, and so are all of the code snippets here.</p>]]></description>
+    </author><guid>http://localhost:1313/posts/search-algo-in-go/</guid>
+    <description><![CDATA[<p>My previous couple of posts talked about <a href="http://localhost:1313/posts/solver-intro/" rel="">what the solver does (solves CSPs)</a>, <a href="http://localhost:1313/posts/solver-basics/" rel="">how to model a problem as a CSP, and how the search tree is built</a> as the solver searches for a solution. In this post I will expand on the details of search by outlining the key data structures and bits of code. The backend is written in <a href="https://go.dev" target="_blank" rel="noopener noreferrer">Go lang</a>, and so are all of the code snippets here.</p>]]></description>
 </item><item>
     <title>Solver basics</title>
-    <link>https://blog.dawnofthe.dad/posts/solver-basics/</link>
+    <link>http://localhost:1313/posts/solver-basics/</link>
     <pubDate>Sat, 02 Sep 2023 12:49:25 -0700</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/solver-basics/</guid>
+    </author><guid>http://localhost:1313/posts/solver-basics/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/thinking.png" referrerpolicy="no-referrer">
-            </div><p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
+            </div><p>In the <a href="http://localhost:1313/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
 </item><item>
     <title>Solver intro</title>
-    <link>https://blog.dawnofthe.dad/posts/solver-intro/</link>
+    <link>http://localhost:1313/posts/solver-intro/</link>
     <pubDate>Sat, 26 Aug 2023 22:43:00 &#43;0000</pubDate><author>
         <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/solver-intro/</guid>
+    </author><guid>http://localhost:1313/posts/solver-intro/</guid>
     <description><![CDATA[<p>The underlying general purpose solver is the most interesting and most complex part of the backend; it&rsquo;s also the thing I have now rewritten 3 times for various reasons. So I&rsquo;m going to talk about that a bit: what it does, why it is interesting and challenging to build, and where it is at today.</p>]]></description>
 </item></channel>
 </rss>

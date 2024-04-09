@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" /><title>Constraint Propagation - Blog of the Dad</title><meta name="Description" content="Applying constraint propagation to eliminate infeasible search states"><meta property="og:title" content="Constraint Propagation" />
 <meta property="og:description" content="Applying constraint propagation to eliminate infeasible search states" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.dawnofthe.dad/posts/constraint-propagation/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="http://localhost:1313/posts/constraint-propagation/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-04T15:59:06-07:00" />
 <meta property="article:modified_time" content="2023-09-04T15:59:06-07:00" /><meta property="og:site_name" content="Blog of the Dad" />
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Constraint Propagation"/>
@@ -22,16 +22,16 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-<link rel="canonical" href="https://blog.dawnofthe.dad/posts/constraint-propagation/" /><link rel="prev" href="https://blog.dawnofthe.dad/posts/search-algo-in-go/" /><link rel="next" href="https://blog.dawnofthe.dad/posts/heuristics/" />
+<link rel="canonical" href="http://localhost:1313/posts/constraint-propagation/" /><link rel="prev" href="http://localhost:1313/posts/search-algo-in-go/" /><link rel="next" href="http://localhost:1313/posts/heuristics/" />
 <link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "Constraint Propagation",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https://blog.dawnofthe.dad/posts/constraint-propagation/"
-        },"image": ["https://blog.dawnofthe.dad/4q-prop.svg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  1680 ,
-        "url": "https://blog.dawnofthe.dad/posts/constraint-propagation/","datePublished": "2023-09-04T15:59:06-07:00","dateModified": "2023-09-04T15:59:06-07:00","publisher": {
+            "@id": "http://localhost:1313/posts/constraint-propagation/"
+        },"image": ["http://localhost:1313/4q-prop.svg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  1680 ,
+        "url": "http://localhost:1313/posts/constraint-propagation/","datePublished": "2023-09-04T15:59:06-07:00","dateModified": "2023-09-04T15:59:06-07:00","publisher": {
             "@type": "Organization",
             "name": "Andrei"},"author": {
                 "@type": "Person",
@@ -124,12 +124,11 @@
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title animate__animated animate__flipInX">Constraint Propagation</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img src="https://blog.dawnofthe.dad/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                <span class="post-author"><img src="http://localhost:1313/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2023-09-04">2023-09-04</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-09-04">2023-09-04</time>&nbsp;<svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1680 words&nbsp;<svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;8 minutes&nbsp;</div>
         </div><div class="featured-image"><img
@@ -159,7 +158,7 @@
             </div><div class="content" id="content"><p>Constraint propagation is one of the key mechanisms that allows constructive search to efficiently explore huge search spaces. It does so by applying constraints whenever search state changes to remove parts of search space that cannot contain solutions.</p>
 <p>In this post I&rsquo;ll cover two constraint propagation techniques: forward checking and arc consistency. As these techniques apply to variables&rsquo; live domains, I&rsquo;ll start by defining what that is first, and then dive into constraint propagation itself.</p>
 <h2 id="variables-and-domains" class="headerLink">
-    <a href="#variables-and-domains" class="header-mark"></a>Variables and domains</h2><p>Variables in CSPs are associated with their <em>domains</em>, for example, in <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">N-queens problem</a> each variable represents a queen in a particular column and its domain represents the N possible rows that the queen may be assigned to; in order to find a solution to the CSP we must assign variables to exactly one value from their respective domains such that no constraints are violated. Before we discuss constraint propagation it would help to define another concept - <em>live domain</em>.</p>
+    <a href="#variables-and-domains" class="header-mark"></a>Variables and domains</h2><p>Variables in CSPs are associated with their <em>domains</em>, for example, in <a href="http://localhost:1313/posts/solver-basics/" rel="">N-queens problem</a> each variable represents a queen in a particular column and its domain represents the N possible rows that the queen may be assigned to; in order to find a solution to the CSP we must assign variables to exactly one value from their respective domains such that no constraints are violated. Before we discuss constraint propagation it would help to define another concept - <em>live domain</em>.</p>
 <p><strong>Live domain</strong> of a variable V is a subset of values from V&rsquo;s domain that may still be part of a solution. Unlike domain of a variable, which is static and defined once as part of the CSP, live domain changes throughout the search:</p>
 <ul>
 <li>Decisions made during search can directly affect a variable&rsquo;s live domain. For example, choosing to assign a queen to a particular row, let&rsquo;s call it <em>k</em>, will mutate its live domain to be just that value; i.e., {<em>k</em>}.</li>
@@ -189,7 +188,7 @@
 <p>The more general case can have constraints with many variables, like <em>all-different</em> constraint, and possibly only partial live-domain changes, rather than reductions to a single assigned value. In this case we need to rely on <strong>supports</strong> of a constraint. A support is defined as a set of assignments of values to all variables involved in a constraint that do not violate the constraint. Coming back to constraint propagation, the last step of forward checking means that as we look at live domains of variables, we should remove any values that can no longer be supported given the current state of search.</p>
 <p>Let&rsquo;s explain this last bit with an example, this time looking at <em>all-different</em> constraint defined on 4 queens, which tells us that all 4 queens must be assigned to unique rows. Now, suppose that:</p>
 <ul>
-<li>Initially Q1 (using the same notation as in the <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">older post</a>) has live domain of {1, 2, 3}, Q2 has live domain of {1, 2}, Q3 has live domain of {3, 4} and Q4 has live domain of {3}.</li>
+<li>Initially Q1 (using the same notation as in the <a href="http://localhost:1313/posts/solver-basics/" rel="">older post</a>) has live domain of {1, 2, 3}, Q2 has live domain of {1, 2}, Q3 has live domain of {3, 4} and Q4 has live domain of {3}.</li>
 <li>If we assign Q1 to 3, we will end up removing 3 from live domain of Q3 and Q4.</li>
 </ul>
 <p>One interesting and important bit about this simple example is that this would mean that Q4 now has an empty live domain. This is referred to as a <em>wipeout</em> and means that we won&rsquo;t be able to find a solution in this part of the search space <strong>and must backtrack</strong>. This is one of the key benefits of constraint propagation - by doing a bit of work up-front, not only can we reduce work further down in the search tree, but we can sometimes detect infeasibility (i.e., absence of a solution) early, and backtrack right away.</p>
@@ -303,12 +302,6 @@
     
       defer
     
-  ></script><script type="text/javascript">
-            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'G-WS2FCBYJLF');
-        </script><script
-    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
-    async
   ></script></div>
 </body>
 

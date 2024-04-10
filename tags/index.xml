@@ -3,7 +3,28 @@
         <title>Tags - Tag - Blog of the Dad</title>
         <link>https://blog.dawnofthe.dad/tags/</link>
         <description>Tags - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 31 Mar 2024 19:38:45 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 08 Apr 2024 20:42:30 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>Backend</title>
+    <link>https://blog.dawnofthe.dad/tags/backend/</link>
+    <pubDate>Mon, 08 Apr 2024 20:42:30 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/tags/backend/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Frontend</title>
+    <link>https://blog.dawnofthe.dad/tags/frontend/</link>
+    <pubDate>Mon, 08 Apr 2024 20:42:30 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/tags/frontend/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Visualization</title>
+    <link>https://blog.dawnofthe.dad/tags/visualization/</link>
+    <pubDate>Mon, 08 Apr 2024 20:42:30 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/tags/visualization/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>Design</title>
     <link>https://blog.dawnofthe.dad/tags/design/</link>
     <pubDate>Sun, 31 Mar 2024 19:38:45 -0800</pubDate><author>
@@ -23,27 +44,6 @@
     <pubDate>Sun, 12 Nov 2023 18:21:01 -0800</pubDate><author>
         <name>Andrei</name>
     </author><guid>https://blog.dawnofthe.dad/tags/go/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Backend</title>
-    <link>https://blog.dawnofthe.dad/tags/backend/</link>
-    <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
-        <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/backend/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Frontend</title>
-    <link>https://blog.dawnofthe.dad/tags/frontend/</link>
-    <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
-        <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/frontend/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Visualization</title>
-    <link>https://blog.dawnofthe.dad/tags/visualization/</link>
-    <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
-        <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/tags/visualization/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Backtracking</title>

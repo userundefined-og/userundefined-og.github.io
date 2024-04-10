@@ -341,7 +341,7 @@ sequenceDiagram
 <ul>
 <li><strong>Variables</strong> - in this case, we will associate each crossword entry, like 5-across, with a variable.</li>
 <li><strong>Variable domains</strong> of such variables are the possible words from the dictionary that such a crossword entry can take. Here the word length is the only thing that matters, so if the crossword entry is 5 letters long, the domain of its variable is all dictionary words of length 5.</li>
-<li><strong>Constraits</strong> - there are two key types of constraints in a crossword:
+<li><strong>Constraints</strong> - there are two key types of constraints in a crossword:
 <ul>
 <li><strong>All different constraint</strong> states that we will only use a given word from the dictionary at most once. We&rsquo;ll only need one for the entire puzzle, but if you want to get to the nitty-gritty level, it&rsquo;s a bit more efficient to have one all-different constraint per possible word length.</li>
 <li><strong>Overlap constraints</strong> state that overlapping words (across and down) must have the same letter in the cell that they overlap on. For example, in the filled crossword above we can see that 1-across is &ldquo;ABAC&rdquo; and 1-down is &ldquo;ATAT&rdquo; - the two words overlap on the first letter, which happens to be &ldquo;A&rdquo;.  There will be many constraints of this type, to enumerate all overlaps.</li>

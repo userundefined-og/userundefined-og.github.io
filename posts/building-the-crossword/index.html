@@ -7,13 +7,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" /><title>Building the Crossword Builder - Blog of the Dad</title><meta name="Description" content="Technical website about dawnofthe.dad and the like"><meta property="og:title" content="Building the Crossword Builder" />
-<meta property="og:description" content="My crossword builder is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this article I&rsquo;ll talk about how each side works, and how the two communicate with each other." />
+<meta property="og:description" content="My crossword builder is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this post I&rsquo;ll talk about how each side works, and how the two communicate with each other." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://blog.dawnofthe.dad/posts/building-the-crossword/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-04-08T20:42:30-07:00" />
 <meta property="article:modified_time" content="2024-04-08T20:42:30-07:00" /><meta property="og:site_name" content="Blog of the Dad" />
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Building the Crossword Builder"/>
-<meta name="twitter:description" content="My crossword builder is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this article I&rsquo;ll talk about how each side works, and how the two communicate with each other."/>
+<meta name="twitter:description" content="My crossword builder is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this post I&rsquo;ll talk about how each side works, and how the two communicate with each other."/>
 <meta name="application-name" content="Blog of the Dad">
 <meta name="apple-mobile-web-app-title" content="Blog of the Dad">
 
@@ -164,7 +164,7 @@
     <li><a href="#summary">Summary</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>My <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crossword builder</a> is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this article I&rsquo;ll talk about how each side works, and how the two communicate with each other.</p>
+            </div><div class="content" id="content"><p>My <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crossword builder</a> is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this post I&rsquo;ll talk about how each side works, and how the two communicate with each other.</p>
 <h2 id="overview" class="headerLink">
     <a href="#overview" class="header-mark"></a>Overview</h2><p>The high level view of the system is fairly straight-forward, with the user interacting with the frontend via the browser, and the frontend, running in the browser, interacting with the backend over a websocket. The overall flow is basically the same as for the <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku solver</a>, which I have covered in an <a href="https://blog.dawnofthe.dad/posts/visualizing-search/" rel="">earlier post</a>:
 <pre class="mermaid">
@@ -494,8 +494,8 @@ sequenceDiagram
 </div>
 </div><p>The above is computationally cheap, but uses a bit more bandwidth than a more condensed/compressed solution might. That being said, 15x15=225, so we&rsquo;re looking at only 2.25KB/s, which is small enough not to care.</p>
 <h2 id="summary" class="headerLink">
-    <a href="#summary" class="header-mark"></a>Summary</h2><p>In this article I&rsquo;ve described how I&rsquo;ve bolted together a frontend and a backend to create the crossword builder, along with they requirements and responsibilities that I&rsquo;ve assigned to each, and the basic protocol between the two. I&rsquo;ve spoken at some length about what the frontend is like, and in a bit of detail about how the backend solves these problems by modeling them as CSPs. If you&rsquo;re interested in learning more about the CSP solver itself, check out my other <a href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="">posts on the subject</a>.</p>
-<p>This article ended up rather long, so I&rsquo;ve left out a few important, but separable things, relating to the backend and keeping it reliable, plus a few tidbits about how the site is deployed. I might write more about those another time, and, if you&rsquo;ve made it this far, thanks for reading!</p>
+    <a href="#summary" class="header-mark"></a>Summary</h2><p>In this post I&rsquo;ve described how I&rsquo;ve bolted together a frontend and a backend to create the crossword builder, along with they requirements and responsibilities that I&rsquo;ve assigned to each, and the basic protocol between the two. I&rsquo;ve spoken at some length about what the frontend is like, and in a bit of detail about how the backend solves these problems by modeling them as CSPs. If you&rsquo;re interested in learning more about the CSP solver itself, check out my other <a href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="">posts on the subject</a>.</p>
+<p>This post ended up rather long, so I&rsquo;ve left out a few important, but separable things, relating to the backend and keeping it reliable, plus a few tidbits about how the site is deployed. I might write more about those another time, and, if you&rsquo;ve made it this far, thanks for reading!</p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>

@@ -2,18 +2,18 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://blog.dawnofthe.dad/tags/backend/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/posts/building-the-crossword/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/categories/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/categories/constructive-search/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/tags/frontend/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/posts/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/tags/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/tags/visualization/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/tags/design/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/categories/testing/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
-            <loc>https://blog.dawnofthe.dad/posts/testing/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/tags/backend/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/posts/building-the-crossword/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/categories/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/categories/constructive-search/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/tags/frontend/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/posts/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/tags/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/tags/visualization/</loc><lastmod>2024-04-08T20:42:30-07:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/tags/design/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/categories/testing/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.dawnofthe.dad/posts/testing/</loc><lastmod>2024-03-31T19:38:45-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.dawnofthe.dad/tags/algorithms/</loc><lastmod>2023-11-12T18:21:01-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.dawnofthe.dad/posts/all-different-variants/</loc><lastmod>2023-11-12T18:21:01-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.dawnofthe.dad/tags/go/</loc><lastmod>2023-11-12T18:21:01-08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>

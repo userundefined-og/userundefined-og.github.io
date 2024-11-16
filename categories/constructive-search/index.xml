@@ -20,8 +20,14 @@
     </author><guid>https://blog.dawnofthe.dad/posts/all-different-variants/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="/spongebob-crossed-eyes.jpg" referrerpolicy="no-referrer">
-            </div>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
-how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution.]]></description>
+            </div><p>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:</p>
+<ul>
+<li>how the problems are represented using variables and constraints,</li>
+<li>how the solver searches for a solution by building up the search tree,</li>
+<li>how heuristics guide the search, and</li>
+<li>how constraint propagation helps eliminate parts of the search space that will not contain solutions.</li>
+</ul>
+<p>In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution. In particular, I&rsquo;ll talk about different ways of implementing the <em>all-different</em> constraint, and look at the various implementations&rsquo; performance characteristics.</p>]]></description>
 </item><item>
     <title>Visualizing Search</title>
     <link>https://blog.dawnofthe.dad/posts/visualizing-search/</link>

@@ -1,21 +1,26 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noodp" /><title>All Different Variants - Blog of the Dad</title><meta name="Description" content="Technical website about dawnofthe.dad and the like"><meta property="og:title" content="All Different Variants" />
-<meta property="og:description" content="In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
-how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.dawnofthe.dad/posts/all-different-variants/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2023-11-12T18:21:01-08:00" />
-<meta property="article:modified_time" content="2023-11-12T18:21:01-08:00" /><meta property="og:site_name" content="Blog of the Dad" />
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="All Different Variants"/>
-<meta name="twitter:description" content="In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:
-how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution."/>
+    <meta name="robots" content="noodp" /><title>All Different Variants - Blog of the Dad</title><meta name="Description" content="Technical website about dawnofthe.dad and the like"><meta property="og:url" content="https://blog.dawnofthe.dad/posts/all-different-variants/">
+  <meta property="og:site_name" content="Blog of the Dad">
+  <meta property="og:title" content="All Different Variants">
+  <meta property="og:description" content="In the earlier posts I’ve described some of the basic ideas behind CSPs:
+how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution. In particular, I’ll talk about different ways of implementing the all-different constraint, and look at the various implementations’ performance characteristics.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-11-12T18:21:01-08:00">
+    <meta property="article:modified_time" content="2023-11-12T18:21:01-08:00">
+    <meta property="article:tag" content="Algorithms">
+    <meta property="article:tag" content="Go">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="All Different Variants">
+  <meta name="twitter:description" content="In the earlier posts I’ve described some of the basic ideas behind CSPs:
+how the problems are represented using variables and constraints, how the solver searches for a solution by building up the search tree, how heuristics guide the search, and how constraint propagation helps eliminate parts of the search space that will not contain solutions. In this post I will look at how modeling the problem itself can have a significant influence on how quickly the solver is able to find a solution. In particular, I’ll talk about different ways of implementing the all-different constraint, and look at the various implementations’ performance characteristics.">
 <meta name="application-name" content="Blog of the Dad">
 <meta name="apple-mobile-web-app-title" content="Blog of the Dad">
 
@@ -24,14 +29,13 @@ how the problems are represented using variables and constraints, how the solver
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
 <link rel="canonical" href="https://blog.dawnofthe.dad/posts/all-different-variants/" /><link rel="prev" href="https://blog.dawnofthe.dad/posts/rubber-duck-ftw/" /><link rel="next" href="https://blog.dawnofthe.dad/posts/testing/" />
-<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
-        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "All Different Variants",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https://blog.dawnofthe.dad/posts/all-different-variants/"
-        },"image": ["https://blog.dawnofthe.dad/spongebob-crossed-eyes.jpg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  2843 ,
+        },"image": ["https://blog.dawnofthe.dad/spongebob-crossed-eyes.jpg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  2720 ,
         "url": "https://blog.dawnofthe.dad/posts/all-different-variants/","datePublished": "2023-11-12T18:21:01-08:00","dateModified": "2023-11-12T18:21:01-08:00","publisher": {
             "@type": "Organization",
             "name": "Andrei"},"author": {
@@ -41,9 +45,11 @@ how the problems are represented using variables and constraints, how the solver
             },"description": ""
     }</script></head>
 
-<body header-desktop="" header-mobile=""><script type="text/javascript">
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
         function setTheme(theme) {
           document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
           document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
           if (theme === 'light') {
             document.documentElement.classList.remove('tw-dark')
@@ -55,8 +61,23 @@ how the problems are represented using variables and constraints, how the solver
         }
         function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
         function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
-        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('' === 'light' || '' === 'dark' || '' === 'black') setTheme(''), saveTheme(''); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
-        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        if (window.localStorage && localStorage.getItem('theme')) {
+            let theme = localStorage.getItem('theme');
+            if (theme === 'light' || theme === 'dark') {
+            setTheme(theme);
+            } else {
+                if ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+         } else { 
+            if ('' === 'light' || '' === 'dark') 
+                setTheme(''), saveTheme(''); 
+            else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+        }
+        let metaColors = {'light': '#f8f8f8','dark': '#161b22'}
         getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
         window.switchThemeEventSet = new Set()
     </script>
@@ -64,12 +85,7 @@ how the problems are represented using variables and constraints, how the solver
     <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="Blog of the Dad"><img
-        class="logo"
-        loading="lazy"
-        src="/android-chrome-192x192.png"
-        srcset="/android-chrome-192x192.png, /android-chrome-192x192.png 1.5x, /android-chrome-192x192.png 2x"
-        title="/android-chrome-192x192.png" height="36"   width="36" >Blog of the Dad</a>
+            <a href="/" title="Blog of the Dad"><img class="tw-inline tw-align-text-bottom tw-mr-1"  src=/android-chrome-192x192.png   alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item"
@@ -85,12 +101,7 @@ how the problems are represented using variables and constraints, how the solver
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="Blog of the Dad"><img
-        class="logo"
-        loading="lazy"
-        src="/android-chrome-192x192.png"
-        srcset="/android-chrome-192x192.png, /android-chrome-192x192.png 1.5x, /android-chrome-192x192.png 2x"
-        title="/android-chrome-192x192.png" >Blog of the Dad</a>
+                <a href="/" title="Blog of the Dad"><img class="tw-inline tw-align-text-bottom tw-mr-1"  src=/android-chrome-192x192.png   alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -139,21 +150,17 @@ how the problems are represented using variables and constraints, how the solver
     <li><a href="#takeaways">Takeaways</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title animate__animated animate__flipInX">All Different Variants</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2023-11-12" data-pagefind-body>All Different Variants</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img src="https://blog.dawnofthe.dad/drd.jpg" alt="Andrei avatar" class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
-                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src=/drd.jpg   alt="Andrei avatar" height="16" width="16"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href=""><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg></a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2023-11-12">2023-11-12</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2843 words&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;14 minutes&nbsp;</div>
-        </div><div class="featured-image"><img
-        
-        loading="eager"
-        src="/spongebob-crossed-eyes.jpg"
-        srcset="/spongebob-crossed-eyes.jpg, /spongebob-crossed-eyes.jpg 1.5x, /spongebob-crossed-eyes.jpg 2x"
-        title="/spongebob-crossed-eyes.jpg" ></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2720 words&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;12 minutes&nbsp;</div>
+        </div><div class="featured-image"><img  loading="eager" src=/spongebob-crossed-eyes.jpg     ></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
                     <span class="details-icon"><svg class="icon"
@@ -188,7 +195,7 @@ how the problems are represented using variables and constraints, how the solver
     <li><a href="#takeaways">Takeaways</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:</p>
+            </div><div class="content" id="content" data-pagefind-body><p>In the earlier posts I&rsquo;ve described some of the basic ideas behind CSPs:</p>
 <ul>
 <li>how the problems are represented using variables and constraints,</li>
 <li>how the solver searches for a solution by building up the search tree,</li>
@@ -205,39 +212,205 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 <p>From this representation, it&rsquo;s easy to see why it can be tempting, and totally valid, to model this constraint just as a set of binary <em>not-equals</em> constraints.</p>
 <h3 id="constraint-interface" class="headerLink">
     <a href="#constraint-interface" class="header-mark"></a>Constraint interface</h3><p>In my solver all constraints implement the following interface:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Constraint</span> <span class="kd">interface</span> <span class="p">{</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-1" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Constraint</span> <span class="kd">interface</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nf">Variables</span><span class="p">()</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Variable</span>
 </span></span><span class="line"><span class="cl">  <span class="nf">Supported</span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span><span class="nx">Variable</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><p>When the solver applies constraint propagation it checks constraints by iterating over its <code>Variables()</code> and checking whether the remaining values in each of the variable&rsquo;s live domains are still <code>Supported()</code> by the constraint. When they are not, they are removed as no solution can exist with that variable-value assignment. You can see how constraint propagation works in the <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">earlier post</a>.</p>
+<p>When the solver applies constraint propagation it checks constraints by iterating over its <code>Variables()</code> and checking whether the remaining values in each of the variable&rsquo;s live domains are still <code>Supported()</code> by the constraint. When they are not, they are removed as no solution can exist with that variable-value assignment. You can see how constraint propagation works in the <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">earlier post</a>.</p>
 <h2 id="all-different-constraint-implementations" class="headerLink">
     <a href="#all-different-constraint-implementations" class="header-mark"></a>All-different constraint implementations</h2><p>There are many ways to enforce this constraint. Let&rsquo;s look at a bunch.</p>
 <h3 id="binary" class="headerLink">
     <a href="#binary" class="header-mark"></a>Binary</h3><p>We&rsquo;ve already covered the simplest, which boils down to taking each pair of variables and adding binary <em>not-equal</em> constraints. This is exactly what we did with N-queens, and results in a quadratic number of binary constraints. One big benefit of this approach is just how easy it is to understand and implement.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">buildBinaryAllDiff</span><span class="p">(</span><span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span><span class="p">)</span> <span class="p">[]</span><span class="nx">model</span><span class="p">.</span><span class="nx">Constraint</span> <span class="p">{</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-2" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">buildBinaryAllDiff</span><span class="p">(</span><span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span><span class="p">)</span> <span class="p">[]</span><span class="nx">model</span><span class="p">.</span><span class="nx">Constraint</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">cs</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">model</span><span class="p">.</span><span class="nx">Constraint</span><span class="p">{}</span>
 </span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">vs</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">vs</span><span class="p">);</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
@@ -245,31 +418,105 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">cs</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><h3 id="basic" class="headerLink">
+<h3 id="basic" class="headerLink">
     <a href="#basic" class="header-mark"></a>Basic</h3><p>Rather than defining many binary constraints, we can do a bit better by defining a single constraint that tracks variables with one live value left and disallows assigning that value to any of the other variables.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffBasic</span> <span class="kd">struct</span> <span class="p">{</span> <span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">}</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-3" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffBasic</span> <span class="kd">struct</span> <span class="p">{</span> <span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">allDiffBasic</span><span class="p">)</span> <span class="nf">Variables</span><span class="p">()</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">vs</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -283,35 +530,106 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">true</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><h3 id="sparse" class="headerLink">
+<h3 id="sparse" class="headerLink">
     <a href="#sparse" class="header-mark"></a>Sparse</h3><p>This one is a little bit more clever by being incremental and tracking state change - whenever a variable is assigned, we track which value is &ldquo;claimed&rdquo; and disallow other variables from that value, and when a variable is unassigned, we allow other variables to be assigned to that value again. You can see that happening in the <code>Set()</code> and <code>Cleared()</code> methods below, which are part of incremental interface (not shown).</p>
 <p>This is very similar in spirit to &ldquo;Basic&rdquo;, but doesn&rsquo;t require explicitly checking every variable whenever we&rsquo;re seeing if the constraint is violated. The reason I call this type of implementation <em>sparse</em> is because it works well when we have many values to choose from. This is the implementation I use for the <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crossword builder</a>, for ensuring words are not repeated - there are very many words in the dictionary to choose from&hellip; but more on this another time.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffSparse</span> <span class="kd">struct</span> <span class="p">{</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-4" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffSparse</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">claimedValues</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">bool</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
@@ -328,40 +646,105 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">allDiffSparse</span><span class="p">)</span> <span class="nf">Cleared</span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span><span class="p">,</span> <span class="nx">prevValue</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nb">delete</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">claimedValues</span><span class="p">,</span> <span class="nx">prevValue</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><h3 id="pigeonhole" class="headerLink">
+<h3 id="pigeonhole" class="headerLink">
     <a href="#pigeonhole" class="header-mark"></a>Pigeonhole</h3><p>This implementation is based on the <a href="https://en.wikipedia.org/wiki/Pigeonhole_principle" target="_blank" rel="noopener noreferrer">Pigeonhole principle</a>, which, to quote Wikipedia, <em>states that if n items are put into m containers, with n &gt; m, then at least one container must contain more than one item</em>. In other words, if we ever get to a state where we have fewer values left to choose from than unassigned variables, we know that the <em>all-different</em> constraint cannot be met. For example, this implementation can detect that if we have three variables, each with domain of {1, 2}, no solution is possible. The more naive implementations would not. So while they all will enforce the constraint given a full assignment, this one can detect infeasibility earlier, saving us from pointlessly trying to find a solution when none exist.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffPigeonHole</span> <span class="kd">struct</span> <span class="p">{</span> <span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">}</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-5" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">allDiffPigeonHole</span> <span class="kd">struct</span> <span class="p">{</span> <span class="nx">vs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">allDiffPigeonHole</span><span class="p">)</span> <span class="nf">Variables</span><span class="p">()</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">Variable</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">vs</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -384,10 +767,9 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">otherVals</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">vs</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><h3 id="bi-partite" class="headerLink">
+<h3 id="bi-partite" class="headerLink">
     <a href="#bi-partite" class="header-mark"></a>Bi-partite</h3><p>This implementation is the most thorough, because it performs a bi-partite match from variables on one side to possible values on the other, and only succeeds when a maximum match exists. In other words, given a partial assignment of values to variables, this constraint will only remain feasible when a possible all-different assignment still exists. An overly simple example to demonstrate that this implementation is more powerful than pigeonhole one is this:</p>
 <ul>
 <li>A problem with 3 variables: X, Y and Z.</li>
@@ -402,70 +784,101 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
     <a href="#the-setup" class="header-mark"></a>The setup</h3><p>We&rsquo;ll be looking at generalized NxN sudokus, as they are effectively one big glob of variables, one per sudoku cell, and <em>all-different</em> constraints enforcing horizontal, vertical and block uniqueness. We&rsquo;ll search for the first, randomly encountered solution, and to do so we&rsquo;ll be using a solver with randomized variable and value ordering <a href="https://blog.dawnofthe.dad/posts/heuristics/" rel="">heuristics</a> and apply <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">forward checking</a> after every assignment. We&rsquo;ll be looking at sudokus of sizes 16x16, 25x25 and 36x36. You can also try most of these <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">online</a>.</p>
 <p>We&rsquo;ll cover two basic metrics - time taken by the solver, and the number of steps the solver took, to reach the first solution. End users will typically only care about the time taken, but the number of steps can give us some insights into how our constraints work.</p>
 <p>We&rsquo;ll be using Go&rsquo;s benchmarking tests to evaluate performance of these implementations. Here&rsquo;s what this benchmark/test looks like:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">timeout</span> <span class="p">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">golang</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-6" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">timeout</span> <span class="p">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">experiment</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">name</span> <span class="kt">string</span>
@@ -523,29 +936,18 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">    <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><p>The performance data is then generated via:</p>
+<p>The performance data is then generated via:</p>
 <p><code>go test -bench=BenchmarkSudoku -benchtime=500x -run=^# -timeout=24h</code></p>
 <p>and plotted with gnuplot. I generated 1000 instances for 16x16, 500 for 25x25, and 200 for 36x36 graphs.</p>
 <h3 id="steps-taken" class="headerLink">
     <a href="#steps-taken" class="header-mark"></a>Steps taken</h3><p>We&rsquo;ll look at steps taken first, because there is a clear winner - as one might expect, the most sophisticated bipartite implementation wins hands-down. In fact, if you try it online with lexicographic ordering you&rsquo;ll notice that it rarely needs to backtrack. Even with randomized ordering it backtracks far less than the alternatives.</p>
 <p>Here is the performance of the five implementations for 16x16 sudokus (all graphs in this post are <a href="https://en.wikipedia.org/wiki/Cumulative_distribution_function" target="_blank" rel="noopener noreferrer">cumulative distribution functions</a>):</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-steps.png"
-        srcset="/plots/cdf-steps.png, /plots/cdf-steps.png 1.5x, /plots/cdf-steps.png 2x"
-        title="16x16 Sudoku - steps taken" ></figure></p>
+<p><img class="tw-inline" loading="lazy" src=/plots/cdf-steps.png   alt="16x16 Sudoku - steps taken"  ></p>
 <p>Bipartite is the fastest, and it is followed closely by pigeonhole. Basic is in third, followed by binary, and with sparse coming in last. These last three don&rsquo;t perform particularly great in terms of steps taken. One interesting bit is that basic takes slightly fewer steps than sparse - I think this is because it is slightly more aggressive at removing values, as it considers all variables with one variable, rather that just assigned variables like sparse does (so it can cover cases where a variable is not assigned yet, but its live domain only has one value left).</p>
 <h3 id="runtime" class="headerLink">
-    <a href="#runtime" class="header-mark"></a>Runtime</h3><p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-time.png"
-        srcset="/plots/cdf-time.png, /plots/cdf-time.png 1.5x, /plots/cdf-time.png 2x"
-        title="16x16 Sudoku - time taken" ></figure></p>
+    <a href="#runtime" class="header-mark"></a>Runtime</h3><p><img class="tw-inline" loading="lazy" src=/plots/cdf-time.png   alt="16x16 Sudoku - time taken"  ></p>
 <p>Pretty different from steps taken, eh? Let&rsquo;s see what&rsquo;s going on here:</p>
 <ul>
 <li>Sparse, the slowest in terms of number of steps, is performing really well when it comes to time. Why? There are a couple of reasons: the speed of evaluating a given constraint, and the fact that we only have one constraint for each set of 16 cells. It&rsquo;s fast because it incrementally maintains state, and when asked if a value is still viable just checks if it has already been taken. And, unlike binary constraints, where we&rsquo;d have 120 binary constraints to represent all-difference of 16 cells (15 * 16 / 2 = 120), there&rsquo;s only one constraint to check. 16x16 sudokus also appear to be under-constrained, so this fast, simple implementation, does  well.</li>
@@ -561,19 +963,9 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 <li>Binary: 19/500 runs timed out.</li>
 <li>Sparse: 4/500 runs timed out.</li>
 </ul>
-<p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-large-steps.png"
-        srcset="/plots/cdf-large-steps.png, /plots/cdf-large-steps.png 1.5x, /plots/cdf-large-steps.png 2x"
-        title="25x25 Sudoku - steps taken" ></figure></p>
+<p><img class="tw-inline" loading="lazy" src=/plots/cdf-large-steps.png   alt="25x25 Sudoku - steps taken"  ></p>
 <p>Looking at steps taken, as before, we can see that bipartite implementation is far smarter and takes way fewer steps than others. Pigeonhole is second best, as before. This isn&rsquo;t too surprising, but perhaps what is interesting is how quickly the simpler implementations start to degrade.</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-large-time.png"
-        srcset="/plots/cdf-large-time.png, /plots/cdf-large-time.png 1.5x, /plots/cdf-large-time.png 2x"
-        title="25x25 Sudoku - time taken" ></figure></p>
+<p><img class="tw-inline" loading="lazy" src=/plots/cdf-large-time.png   alt="25x25 Sudoku - time taken"  ></p>
 <p>Looking at the runtime reinforces that story - the less sophisticated implementations complete about an order of magnitude faster when they&rsquo;re &ldquo;lucky&rdquo;, but <strong>many</strong> orders of magnitude slower when they are not (say, at 95 percentile). So, while on average a couple of these implementations are competitive, on occasion we can hit particularly bad runs that take many minutes to complete&hellip; and binary, the simplest of them all, clearly is struggling to keep up. In contrast, the bipartite implementation is very steady, with basically all of the runs completing in 1.5 - 2 seconds. Pigeonhole isn&rsquo;t quite as fast as bipartite, but still tends to hold up well against the simpler implementations. The runtime of the top few percentiles does get significantly worse though.</p>
 <h3 id="even-larger-instances" class="headerLink">
     <a href="#even-larger-instances" class="header-mark"></a>Even larger instances</h3><p>The even larger, 36x36 set of sudokus, is where we can see the that the simpler approaches start consistently timing out after 10 minutes:</p>
@@ -584,18 +976,8 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </ul>
 <p>These make sense - based on the smaller instances we already noticed that all 3 of these tend to require many more steps, binary suffers from having too many finer-grained constraints to evaluate, basic is non-incremental, and sparse is only a slight improvement over basic. So none of them do well, binary is worse than the other two, while the incrementality of sparse over basic may be slightly helping.</p>
 <p>Only bipartite and pigeonhole implementations remain viable, with bipartite continuing to be in the lead:</p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-very-large-steps.png"
-        srcset="/plots/cdf-very-large-steps.png, /plots/cdf-very-large-steps.png 1.5x, /plots/cdf-very-large-steps.png 2x"
-        title="36x36 Sudoku - steps taken" ></figure></p>
-<p><figure><img
-        
-        loading="lazy"
-        src="/plots/cdf-very-large-time.png"
-        srcset="/plots/cdf-very-large-time.png, /plots/cdf-very-large-time.png 1.5x, /plots/cdf-very-large-time.png 2x"
-        title="36x36 Sudoku - time taken" ></figure></p>
+<p><img class="tw-inline" loading="lazy" src=/plots/cdf-very-large-steps.png   alt="36x36 Sudoku - steps taken"  ></p>
+<p><img class="tw-inline" loading="lazy" src=/plots/cdf-very-large-time.png   alt="36x36 Sudoku - time taken"  ></p>
 <p>In short, bipartite is clearly starting to win, and the trend continues for larger instances, based on a handful of ad hoc experiments.</p>
 <h2 id="takeaways" class="headerLink">
     <a href="#takeaways" class="header-mark"></a>Takeaways</h2><p>Like with many things, it comes down to trade-offs. In this case, choosing the right implementation of an <em>all-different</em> constraint comes down to choosing between simplicity, speed, and consistent performance. Determining which of these is more important to you can help you choose the right implementation:</p>
@@ -624,7 +1006,7 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
         <section class="post-tags"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/algorithms/">Algorithms</a>,&nbsp;<a href="/tags/go/">Go</a></section>
         <section class="print:!tw-hidden">
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+            <span><button class="tw-text-fgColor-link-muted hover:tw-text-fgColor-link-muted-hover" onclick="window.history.back();">Back</button></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
         </section>
     </div>
 
@@ -636,7 +1018,7 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
 </article></div>
         </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">
-                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.124.1">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.4.0"><svg class="icon"
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.138.0">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.4.0"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg> DoIt</a>
                 </div><div class="footer-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2024<span class="author">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">Andrei</a></span></div>
@@ -645,17 +1027,11 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
             </div>
         </div></footer></div>
 
-    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="Back to Top">
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="Back to Top">
             <svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
-        </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-            <svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
-        </a>
-    </div><div class="assets"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10000},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script
-    src="/lib/clipboard/clipboard.min.js"
-    
-  ></script><script
+        </a></div><link rel="stylesheet" href="/lib/katex/katex.min.css">
+<script>window.config={"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script
     src="/lib/katex/katex.min.js"
     
       defer
@@ -681,7 +1057,19 @@ $$ \forall u, v \in C_V: value(u) \ne value(v) $$</p>
         </script><script
     src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
     async
-  ></script></div>
+  ></script>
+    
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
 </body>
 
 </html>

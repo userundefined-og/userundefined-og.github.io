@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 334" width="780" height="334" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3fb950"/>
+    </marker>
+    <marker id="arrowMuted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#484f58"/>
+    </marker>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="2" y="2" width="776" height="330" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <text x="22" y="28" font-size="15" font-weight="700" fill="#e6edf3">Per-Depth Conflict Counts &amp; Cached Combined Nogood</text>
+  <text x="22" y="47" font-size="12" fill="#8b949e">Values pruned at deeper nodes can also blame earlier depths, so counts track active conflicts per depth</text>
+
+  <!-- Column headers (centers: 318, 417, 516, 615, 714) -->
+  <text x="22" y="75" font-size="11" font-weight="600" fill="#8b949e">Pruned values in conflicts[]</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="700" text-anchor="middle">
+    <text x="318" y="75" fill="#c9d1d9">depth 0</text>
+    <text x="417" y="75" fill="#c9d1d9">depth 1</text>
+    <text x="516" y="75" fill="#c9d1d9">depth 2</text>
+    <text x="615" y="75" fill="#c9d1d9">depth 3</text>
+    <text x="714" y="75" fill="#8b949e">depth 4</text>
+  </g>
+
+  <!-- ================= ROW 1: val 1 (pruned at d=1, nogood {0, 1}) ================= -->
+  <text x="22" y="104" font-size="11.5" fill="#e6edf3">
+    <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600">val 1</tspan>
+    <tspan fill="#8b949e"> (pruned d=1: {0, 1})</tspan>
+  </text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" font-weight="700" text-anchor="middle">
+    <rect x="276" y="84" width="84" height="30" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.3"/>
+    <text x="318" y="104" fill="#79c0ff">1</text>
+
+    <rect x="375" y="84" width="84" height="30" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.3"/>
+    <text x="417" y="104" fill="#79c0ff">1</text>
+
+    <rect x="474" y="84" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="516" y="104" fill="#6e7681">0</text>
+
+    <rect x="573" y="84" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="615" y="104" fill="#6e7681">0</text>
+
+    <rect x="672" y="84" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="714" y="104" fill="#6e7681">0</text>
+  </g>
+
+  <!-- ================= ROW 2: val 3 (pruned at d=2, nogood {2}) ================= -->
+  <text x="22" y="140" font-size="11.5" fill="#e6edf3">
+    <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600">val 3</tspan>
+    <tspan fill="#8b949e"> (pruned d=2: {2})</tspan>
+  </text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" font-weight="700" text-anchor="middle">
+    <rect x="276" y="120" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="318" y="140" fill="#6e7681">0</text>
+
+    <rect x="375" y="120" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="417" y="140" fill="#6e7681">0</text>
+
+    <rect x="474" y="120" width="84" height="30" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.3"/>
+    <text x="516" y="140" fill="#79c0ff">1</text>
+
+    <rect x="573" y="120" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="615" y="140" fill="#6e7681">0</text>
+
+    <rect x="672" y="120" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="714" y="140" fill="#6e7681">0</text>
+  </g>
+
+  <!-- ================= ROW 3: val 6 (pruned at d=3, nogood {1, 3}) ================= -->
+  <text x="22" y="176" font-size="11.5" fill="#e6edf3">
+    <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600">val 6</tspan>
+    <tspan fill="#8b949e"> (pruned d=3: {1, 3})</tspan>
+  </text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" font-weight="700" text-anchor="middle">
+    <rect x="276" y="156" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="318" y="176" fill="#6e7681">0</text>
+
+    <rect x="375" y="156" width="84" height="30" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.3"/>
+    <text x="417" y="176" fill="#79c0ff">1</text>
+
+    <rect x="474" y="156" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="516" y="176" fill="#6e7681">0</text>
+
+    <rect x="573" y="156" width="84" height="30" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.3"/>
+    <text x="615" y="176" fill="#79c0ff">1</text>
+
+    <rect x="672" y="156" width="84" height="30" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="714" y="176" fill="#6e7681">0</text>
+  </g>
+
+  <!-- Column-sum divider -->
+  <line x1="22" y1="201" x2="756" y2="201" stroke="#484f58" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <rect x="358" y="191" width="316" height="20" rx="10" fill="#21262d" stroke="#30363d"/>
+  <text x="516" y="205" font-size="11" font-weight="600" fill="#e6edf3" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">column sum (+1 on prune, -1 on restore)</text>
+
+  <!-- ================= ROW 4: PER-DEPTH REFERENCE COUNTS ================= -->
+  <text x="22" y="233" font-size="11.5" font-weight="600" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">activeConflictsAtDepth</text>
+  <text x="22" y="249" font-size="10.5" fill="#8b949e">pruned values blaming each depth</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" text-anchor="middle">
+    <rect x="276" y="218" width="84" height="36" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="318" y="241" fill="#79c0ff">count = 1</text>
+
+    <rect x="375" y="218" width="84" height="36" rx="5" fill="#172d4d" stroke="#58a6ff" stroke-width="1.8"/>
+    <text x="417" y="241" fill="#a5d6ff">count = 2</text>
+
+    <rect x="474" y="218" width="84" height="36" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="516" y="241" fill="#79c0ff">count = 1</text>
+
+    <rect x="573" y="218" width="84" height="36" rx="5" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="615" y="241" fill="#79c0ff">count = 1</text>
+
+    <rect x="672" y="218" width="84" height="36" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="714" y="241" fill="#6e7681">count = 0</text>
+  </g>
+
+  <!-- Vertical arrows (count > 0 -> bit = 1) -->
+  <line x1="318" y1="256" x2="318" y2="278" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <line x1="417" y1="256" x2="417" y2="278" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <line x1="516" y1="256" x2="516" y2="278" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <line x1="615" y1="256" x2="615" y2="278" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <line x1="714" y1="256" x2="714" y2="278" stroke="#484f58" stroke-width="1.2" marker-end="url(#arrowMuted)"/>
+
+  <!-- ================= ROW 5: CACHED COMBINED NOGOOD BITSET ================= -->
+  <text x="22" y="297" font-size="11.5" font-weight="600" fill="#56d364" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">cachedNogood</text>
+  <text x="22" y="313" font-size="10.5" fill="#8b949e">1 if count &gt; 0 (0 &lt;-&gt; 1 invalidates cache)</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" font-weight="700" text-anchor="middle">
+    <rect x="276" y="282" width="84" height="34" rx="5" fill="#12261e" stroke="#2ea043" stroke-width="1.6"/>
+    <text x="318" y="304" fill="#56d364">1</text>
+
+    <rect x="375" y="282" width="84" height="34" rx="5" fill="#12261e" stroke="#2ea043" stroke-width="1.6"/>
+    <text x="417" y="304" fill="#56d364">1</text>
+
+    <rect x="474" y="282" width="84" height="34" rx="5" fill="#12261e" stroke="#2ea043" stroke-width="1.6"/>
+    <text x="516" y="304" fill="#56d364">1</text>
+
+    <rect x="573" y="282" width="84" height="34" rx="5" fill="#12261e" stroke="#2ea043" stroke-width="1.6"/>
+    <text x="615" y="304" fill="#56d364">1</text>
+
+    <rect x="672" y="282" width="84" height="34" rx="5" fill="#21262d" stroke="#30363d"/>
+    <text x="714" y="304" fill="#6e7681">0</text>
+  </g>
+</svg>

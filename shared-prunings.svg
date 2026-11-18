@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 246" width="780" height="246" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowIndigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4f46e5"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="2" y="2" width="776" height="242" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <text x="22" y="28" font-size="15" font-weight="700" fill="#0f172a">Shared Pruned-Values Slice</text>
+  <text x="22" y="47" font-size="12" fill="#475569">Each node holds its own decision and a start offset into one shared slice of propagated prunings</text>
+
+  <!-- ================= ROW 1: SEARCH NODES (1 DECISION EACH) ================= -->
+  <!-- depth 0 spans [0..1] (x=22..226) -->
+  <rect x="22" y="66" width="204" height="38" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.4"/>
+  <text x="32" y="89" font-size="11.5" font-weight="700" fill="#1d4ed8">depth 0: <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">v0 = 2</tspan></text>
+  <text x="216" y="89" font-size="10.5" fill="#0f172a" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">start = 0</text>
+  <line x1="71" y1="104" x2="71" y2="124" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- depth 1 spans [2..4] (x=234..544) -->
+  <rect x="234" y="66" width="310" height="38" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="244" y="89" font-size="11.5" font-weight="700" fill="#4338ca">depth 1: <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">v1 = 7</tspan></text>
+  <text x="534" y="89" font-size="10.5" fill="#0f172a" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">start = 2</text>
+  <line x1="283" y1="104" x2="283" y2="124" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowIndigo)"/>
+
+  <!-- depth 2 spans [5..6] (x=552..756) -->
+  <rect x="552" y="66" width="204" height="38" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+  <text x="562" y="89" font-size="11.5" font-weight="700" fill="#b45309">depth 2: <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">v6 = 1</tspan></text>
+  <text x="746" y="89" font-size="10.5" fill="#0f172a" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">start = 5</text>
+  <line x1="601" y1="104" x2="601" y2="124" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+
+  <!-- ================= ROW 2: SHARED PROPAGATED PRUNINGS SLICE [0..6] ================= -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" text-anchor="middle">
+    <!-- [0] -->
+    <rect x="22" y="128" width="98" height="48" rx="5" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="71" y="147" font-size="10.5" font-weight="700" fill="#1d4ed8">[0]</text>
+    <text x="71" y="165" font-size="11" fill="#0f172a">v3 != 12</text>
+
+    <!-- [1] -->
+    <rect x="128" y="128" width="98" height="48" rx="5" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="177" y="147" font-size="10.5" font-weight="700" fill="#1d4ed8">[1]</text>
+    <text x="177" y="165" font-size="11" fill="#0f172a">v7 != 4</text>
+
+    <!-- [2] -->
+    <rect x="234" y="128" width="98" height="48" rx="5" fill="#eef2ff" stroke="#6366f1" stroke-width="1.3"/>
+    <text x="283" y="147" font-size="10.5" font-weight="700" fill="#4338ca">[2]</text>
+    <text x="283" y="165" font-size="11" fill="#0f172a">v2 != 9</text>
+
+    <!-- [3] -->
+    <rect x="340" y="128" width="98" height="48" rx="5" fill="#eef2ff" stroke="#6366f1" stroke-width="1.3"/>
+    <text x="389" y="147" font-size="10.5" font-weight="700" fill="#4338ca">[3]</text>
+    <text x="389" y="165" font-size="11" fill="#0f172a">v5 != 1</text>
+
+    <!-- [4] -->
+    <rect x="446" y="128" width="98" height="48" rx="5" fill="#eef2ff" stroke="#6366f1" stroke-width="1.3"/>
+    <text x="495" y="147" font-size="10.5" font-weight="700" fill="#4338ca">[4]</text>
+    <text x="495" y="165" font-size="11" fill="#0f172a">v5 != 8</text>
+
+    <!-- [5] -->
+    <rect x="552" y="128" width="98" height="48" rx="5" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+    <text x="601" y="147" font-size="10.5" font-weight="700" fill="#b45309">[5]</text>
+    <text x="601" y="165" font-size="11" fill="#0f172a">v4 != 3</text>
+
+    <!-- [6] -->
+    <rect x="658" y="128" width="98" height="48" rx="5" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+    <text x="707" y="147" font-size="10.5" font-weight="700" fill="#b45309">[6]</text>
+    <text x="707" y="165" font-size="11" fill="#0f172a">v8 != 6</text>
+  </g>
+
+  <!-- ================= ROW 3: REVERSE UNDO ARROW ================= -->
+  <line x1="744" y1="196" x2="564" y2="196" stroke="#dc2626" stroke-width="1.6" marker-end="url(#arrowRed)"/>
+  <text x="654" y="216" font-size="11" font-weight="700" fill="#b91c1c" text-anchor="middle">restore [6], then [5]</text>
+
+  <text x="22" y="216" font-size="11.5" fill="#334155">
+    Backtracking from depth 2 restores down to <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600" fill="#0f172a">start = 5</tspan>, then clears <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600" fill="#0f172a">v6 = 1</tspan>
+  </text>
+</svg>

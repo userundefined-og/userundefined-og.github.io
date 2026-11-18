@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 320" width="780" height="320" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3fb950"/>
+    </marker>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="2" y="2" width="776" height="316" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <text x="22" y="28" font-size="15" font-weight="700" fill="#e6edf3">Packing a Live Domain into 64-Bit Buckets</text>
+  <text x="22" y="47" font-size="12" fill="#8b949e">Domain [10, 140] (131 values) spans three uint64 buckets; each value val maps to idx = val - 10</text>
+
+  <!-- ================= ROW 1: 3 BUCKETS ================= -->
+  <!-- Bucket 0: empty example -->
+  <rect x="22" y="66" width="232" height="68" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.3"/>
+  <text x="34" y="87" font-size="12" font-weight="700" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bitset[0]</text>
+  <text x="242" y="87" font-size="11" fill="#8b949e" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">val 10..73</text>
+  <rect x="34" y="96" width="208" height="26" rx="4" fill="#161b22" stroke="#30363d"/>
+  <text x="138" y="113" font-size="11" fill="#6e7681" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">all 0s -&gt; skip 64 vals</text>
+
+  <!-- Bucket 1: active, zoomed below -->
+  <rect x="274" y="66" width="232" height="68" rx="8" fill="#13233a" stroke="#388bfd" stroke-width="1.8"/>
+  <text x="286" y="87" font-size="12" font-weight="700" fill="#79c0ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bitset[1]</text>
+  <text x="494" y="87" font-size="11" fill="#a5d6ff" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">val 74..137</text>
+  <rect x="286" y="96" width="208" height="26" rx="4" fill="#0d1b2e" stroke="#1f6feb"/>
+  <text x="390" y="113" font-size="11" font-weight="600" fill="#a5d6ff" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">64 bits (zoomed below)</text>
+
+  <!-- Bucket 2: partial tail bucket -->
+  <rect x="526" y="66" width="232" height="68" rx="8" fill="#21262d" stroke="#30363d" stroke-width="1.3"/>
+  <text x="538" y="87" font-size="12" font-weight="700" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bitset[2]</text>
+  <text x="746" y="87" font-size="11" fill="#8b949e" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">val 138..140</text>
+  <rect x="538" y="96" width="58" height="26" rx="4" fill="#13233a" stroke="#388bfd" stroke-width="1.2"/>
+  <text x="567" y="113" font-size="10.5" font-weight="700" fill="#79c0ff" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">0..2</text>
+  <rect x="600" y="96" width="146" height="26" rx="4" fill="#161b22" stroke="#30363d" stroke-dasharray="3 3"/>
+  <text x="673" y="113" font-size="10.5" fill="#6e7681" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bits 3..63 = 0</text>
+
+  <!-- Zoom projection lines from bitset[1] -->
+  <line x1="274" y1="134" x2="206" y2="166" stroke="#1f6feb" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <line x1="506" y1="134" x2="756" y2="166" stroke="#1f6feb" stroke-width="1.3" stroke-dasharray="4 3"/>
+
+  <!-- ================= ROW 2: ZOOMED BIT CELLS OF bitset[1] ================= -->
+  <!-- Lookup example callout on left -->
+  <rect x="22" y="176" width="164" height="84" rx="7" fill="#12261e" stroke="#2ea043" stroke-width="1.5"/>
+  <text x="34" y="196" font-size="11.5" font-weight="700" fill="#7ee787">Lookup val = 76</text>
+  <text x="34" y="214" font-size="11" fill="#c9d1d9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">idx = 76 - 10 = 66</text>
+  <text x="34" y="231" font-size="11" fill="#c9d1d9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bucket = 66 / 64 = 1</text>
+  <text x="34" y="248" font-size="11" font-weight="700" fill="#56d364" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">bit = 66 % 64 = 2</text>
+
+  <!-- Zoom container -->
+  <rect x="200" y="166" width="558" height="102" rx="8" fill="#0d1117" stroke="#1f6feb" stroke-width="1.3"/>
+
+  <!-- Bit headers (bit 0..6, ..63) -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" text-anchor="middle">
+    <text x="241" y="185" font-size="10.5" fill="#8b949e">bit 0</text>
+    <text x="241" y="200" font-size="11" fill="#c9d1d9">val 74</text>
+
+    <text x="309" y="185" font-size="10.5" fill="#8b949e">bit 1</text>
+    <text x="309" y="200" font-size="11" fill="#6e7681">val 75</text>
+
+    <text x="377" y="185" font-size="10.5" font-weight="700" fill="#56d364">bit 2</text>
+    <text x="377" y="200" font-size="11" font-weight="700" fill="#56d364">val 76</text>
+
+    <text x="445" y="185" font-size="10.5" fill="#8b949e">bit 3</text>
+    <text x="445" y="200" font-size="11" fill="#c9d1d9">val 77</text>
+
+    <text x="513" y="185" font-size="10.5" fill="#8b949e">bit 4</text>
+    <text x="513" y="200" font-size="11" fill="#6e7681">val 78</text>
+
+    <text x="581" y="185" font-size="10.5" fill="#8b949e">bit 5</text>
+    <text x="581" y="200" font-size="11" fill="#6e7681">val 79</text>
+
+    <text x="649" y="185" font-size="10.5" fill="#8b949e">bit 6</text>
+    <text x="649" y="200" font-size="11" fill="#c9d1d9">val 80</text>
+
+    <text x="717" y="185" font-size="10.5" fill="#8b949e">..63</text>
+    <text x="717" y="200" font-size="11" fill="#8b949e">..137</text>
+  </g>
+
+  <!-- Bit value boxes -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="700" text-anchor="middle">
+    <rect x="212" y="210" width="58" height="38" rx="6" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="241" y="235" fill="#79c0ff">1</text>
+
+    <rect x="280" y="210" width="58" height="38" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+    <text x="309" y="235" fill="#6e7681">0</text>
+
+    <rect x="348" y="210" width="58" height="38" rx="6" fill="#12261e" stroke="#3fb950" stroke-width="2"/>
+    <text x="377" y="235" fill="#56d364">1</text>
+
+    <rect x="416" y="210" width="58" height="38" rx="6" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="445" y="235" fill="#79c0ff">1</text>
+
+    <rect x="484" y="210" width="58" height="38" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+    <text x="513" y="235" fill="#6e7681">0</text>
+
+    <rect x="552" y="210" width="58" height="38" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+    <text x="581" y="235" fill="#6e7681">0</text>
+
+    <rect x="620" y="210" width="58" height="38" rx="6" fill="#13233a" stroke="#388bfd" stroke-width="1.5"/>
+    <text x="649" y="235" fill="#79c0ff">1</text>
+
+    <rect x="688" y="210" width="58" height="38" rx="6" fill="#161b22" stroke="#30363d" stroke-dasharray="3 3"/>
+    <text x="717" y="234" font-size="13" fill="#6e7681">...</text>
+  </g>
+
+  <!-- Curved pointer from Lookup val = 76 to bit 2 -->
+  <path d="M 186 250 Q 280 282 372 252" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#arrowGreen)"/>
+
+  <!-- Footer -->
+  <text x="390" y="298" font-size="12" fill="#c9d1d9" text-anchor="middle">
+    <tspan font-weight="700" fill="#79c0ff">1</tspan> = live, <tspan font-weight="700" fill="#8b949e">0</tspan> = pruned; unused high bits in the final bucket stay <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="600" fill="#e6edf3">0</tspan> so bit counts stay exact
+  </text>
+</svg>

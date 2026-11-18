@@ -1,6 +1,26 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Frontend - Tag - Blog of the Dad</title><link>https://blog.dawnofthe.dad/tags/frontend/</link><description>Frontend - Tag - Blog of the Dad</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 08 Apr 2024 20:42:30 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/frontend/" rel="self" type="application/rss+xml"/><item><title>Building the Crossword Builder</title><link>https://blog.dawnofthe.dad/posts/building-the-crossword/</link><pubDate>Mon, 08 Apr 2024 20:42:30 -0700</pubDate><author><name>Andrei</name></author><guid>https://blog.dawnofthe.dad/posts/building-the-crossword/</guid><description><![CDATA[<div class="featured-image">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Frontend - Tag - Blog of the Dad</title>
+        <link>https://blog.dawnofthe.dad/tags/frontend/</link>
+        <description>Frontend - Tag - Blog of the Dad</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 08 Apr 2024 20:42:30 -0700</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/frontend/" rel="self" type="application/rss+xml" /><item>
+    <title>Building the Crossword Builder</title>
+    <link>https://blog.dawnofthe.dad/posts/building-the-crossword/</link>
+    <pubDate>Mon, 08 Apr 2024 20:42:30 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/building-the-crossword/</guid>
+    <description><![CDATA[<div class="featured-image">
                 <img src="/xword.png" referrerpolicy="no-referrer">
-            </div><p>My <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crossword builder</a> is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this post I&rsquo;ll talk about how each side works, and how the two communicate with each other.</p>]]></description></item><item><title>Visualizing Search</title><link>https://blog.dawnofthe.dad/posts/visualizing-search/</link><pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author><name>Andrei</name></author><guid>https://blog.dawnofthe.dad/posts/visualizing-search/</guid><description><![CDATA[<div class="featured-image">
+            </div><p>My <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crossword builder</a> is essentially composed of two major parts: the frontend and the backend. The frontend is in JavaScript, while the backend is written in Go. In this post I&rsquo;ll talk about how each side works, and how the two communicate with each other.</p>]]></description>
+</item><item>
+    <title>Visualizing Search</title>
+    <link>https://blog.dawnofthe.dad/posts/visualizing-search/</link>
+    <pubDate>Sat, 09 Sep 2023 12:50:58 -0700</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/visualizing-search/</guid>
+    <description><![CDATA[<div class="featured-image">
                 <img src="/ndoku-in-progress.png" referrerpolicy="no-referrer">
             </div><p>Part of the appeal of building a solver for the fourth time (?!) for me is that it&rsquo;s fun to watch how it solves the problem. While it&rsquo;s possible and quick to hack something up on command line, the results aren&rsquo;t that pretty and can&rsquo;t be easily shared. In this post I&rsquo;ll talk about building a frontend that talks to the backend via websockets and produces an animated visualization of how the search is solving the problem.</p>
-<p>The scope of this post, and my initial frontend, is generalized NxN sudokus, and this first iteration of the frontend focused on largely non-interactive visualization. You can <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">try it out for yourself online</a>. I&rsquo;ll talk about building up more interactive solvers for regular <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku</a> and <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crosswords</a> separately.</p>]]></description></item></channel></rss>
+<p>The scope of this post, and my initial frontend, is generalized NxN sudokus, and this first iteration of the frontend focused on largely non-interactive visualization. You can <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">try it out for yourself online</a>. I&rsquo;ll talk about building up more interactive solvers for regular <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku</a> and <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crosswords</a> separately.</p>]]></description>
+</item></channel>
+</rss>

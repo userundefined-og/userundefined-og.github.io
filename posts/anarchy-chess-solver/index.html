@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" /><title>Building Anarchy Chess: The Solver - Blog of the Dad</title><meta name="Description" content="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks"><meta property="og:url" content="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/">
+	<meta property="og:site_name" content="Blog of the Dad">
+	<meta property="og:title" content="Building Anarchy Chess: The Solver">
+	<meta property="og:description" content="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks">
+	<meta property="og:locale" content="en">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-11-18T21:10:00-08:00">
+		<meta property="article:modified_time" content="2026-11-18T21:10:00-08:00">
+		<meta property="article:tag" content="Algorithms">
+		<meta property="article:tag" content="Go">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Building Anarchy Chess: The Solver">
+	<meta name="twitter:description" content="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks">
+<meta name="application-name" content="Blog of the Dad">
+<meta name="apple-mobile-web-app-title" content="Blog of the Dad">
+
+<meta name="theme-color" content="#f8f8f8"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" >
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<link rel="canonical" href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/" ><link rel="prev" href="https://blog.dawnofthe.dad/posts/flattening-search-state/" >
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+        "headline": "Building Anarchy Chess: The Solver",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://blog.dawnofthe.dad/posts/anarchy-chess-solver/"
+        },"image": ["https://blog.dawnofthe.dad/anarchy-chess-solver-header.svg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  1908 ,
+        "url": "https://blog.dawnofthe.dad/posts/anarchy-chess-solver/","datePublished": "2026-11-18T21:10:00-08:00","dateModified": "2026-11-18T21:10:00-08:00","publisher": {
+            "@type": "Organization",
+            "name": "Andrei"},"author": {
+                "@type": "Person",
+                "name": "Andrei",
+                "url": "/"
+            },"description": "Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks"
+    }</script></head>
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        function syncThemeFromStorage() {
+            if (window.localStorage && localStorage.getItem('theme')) {
+                let theme = localStorage.getItem('theme');
+                if (theme === 'light' || theme === 'dark') {
+                    setTheme(theme);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            } else {
+                if ('' === 'light' || '' === 'dark')
+                    setTheme(''), saveTheme('');
+                else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+            }
+            let metaColors = {'light': '#f8f8f8','dark': '#161b22'};
+            let themeMeta = getMeta('theme-color');
+            if (themeMeta) themeMeta.content = metaColors[document.body.getAttribute('theme')];
+        }
+        syncThemeFromStorage();
+        window.switchThemeEventSet = new Set();
+        document.addEventListener('prerenderingchange', syncThemeFromStorage);
+        window.addEventListener('pageshow', function (e) { if (e.persisted) syncThemeFromStorage(); });
+        window.addEventListener('storage', function (e) { if (e.key === 'theme') syncThemeFromStorage(); });
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop tw:print:hidden!" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Blog of the Dad"><img class="tw:inline tw:align-text-bottom tw:mr-1" src="/android-chrome-192x192.png" alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > Posts </a><a class="menu-item"
+                    href="/tags/" > Tags </a><a class="menu-item"
+                    href="/categories/" > Categories </a><span class="menu-item delimiter"></span><button class="menu-item theme-switch" aria-label="Switch Theme">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                </button></div>
+        </div>
+    </div>
+</header><header class="mobile tw:print:hidden!" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Blog of the Dad"><img class="tw:inline tw:align-text-bottom tw:mr-1" src="/android-chrome-192x192.png" alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="" >Posts</a><a class="menu-item" href="/tags/" title="" >Tags</a><a class="menu-item" href="/categories/" title="" >Categories</a><button class="menu-item theme-switch tw:w-full" aria-label="Switch Theme">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+            </button></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+            <div class="container"><div class="toc tw:print:hidden!" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-the-n-queens-shortcut-breaks-and-64-bits-saves-the-day">Why the N-queens shortcut breaks (and 64 bits saves the day)</a></li>
+    <li><a href="#hiding-symmetry-breaking-inside-the-same-bitmask">Hiding symmetry breaking inside the same bitmask</a></li>
+    <li><a href="#cooking-up-daily-puzzles-and-my-oops-all-knights-phase">Cooking up daily puzzles (and my &ldquo;oops, all knights&rdquo; phase)</a></li>
+    <li><a href="#powering-hints-when-players-go-off-script">Powering hints when players go off-script</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+    </div><dialog id="toc-dialog" class="tw:max-w-full tw:w-full tw:max-h-full tw:h-full tw:ml-16">
+        <div class="toc tw:mx-4 tw:max-w-full">
+            <h2 class="tw:mx-0 tw:my-6 tw:uppercase tw:text-2xl">Contents</h2>
+            <div class="toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-the-n-queens-shortcut-breaks-and-64-bits-saves-the-day">Why the N-queens shortcut breaks (and 64 bits saves the day)</a></li>
+    <li><a href="#hiding-symmetry-breaking-inside-the-same-bitmask">Hiding symmetry breaking inside the same bitmask</a></li>
+    <li><a href="#cooking-up-daily-puzzles-and-my-oops-all-knights-phase">Cooking up daily puzzles (and my &ldquo;oops, all knights&rdquo; phase)</a></li>
+    <li><a href="#powering-hints-when-players-go-off-script">Powering hints when players go off-script</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+        </div>
+    </dialog><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single tw:print:w-full! tw:print:max-w-none! tw:print:m-0! tw:print:p-0!"><h1 class="single-title" data-pagefind-meta="date:2026-11-18" data-pagefind-body>Building Anarchy Chess: The Solver</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw:inline-block tw:max-h-4 tw:rounded-full tw:translate-y-[-2px] tw:mr-1" src="/drd.jpg" alt="Andrei avatar" height="16" width="16"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2026-11-18">2026-11-18</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1908 words&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="featured-image"><a class="lightgallery" href="/anarchy-chess-solver-header.svg" title="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks" data-thumbnail="/anarchy-chess-solver-header.svg" data-light-src="/anarchy-chess-solver-header.svg" data-dark-src="/anarchy-chess-solver-header-dark.svg" data-width="2400"><img class="theme-img-light" loading="eager" src="/anarchy-chess-solver-header.svg" alt="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks">
+<img class="theme-img-dark" loading="eager" src="/anarchy-chess-solver-header-dark.svg" alt="Fitting generalized non-attacking chess puzzles, puzzle generation, and live hints into 64-bit bitmasks"></a></div><div class="details toc tw:print:block!" id="toc-static" data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-the-n-queens-shortcut-breaks-and-64-bits-saves-the-day">Why the N-queens shortcut breaks (and 64 bits saves the day)</a></li>
+    <li><a href="#hiding-symmetry-breaking-inside-the-same-bitmask">Hiding symmetry breaking inside the same bitmask</a></li>
+    <li><a href="#cooking-up-daily-puzzles-and-my-oops-all-knights-phase">Cooking up daily puzzles (and my &ldquo;oops, all knights&rdquo; phase)</a></li>
+    <li><a href="#powering-hints-when-players-go-off-script">Powering hints when players go off-script</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content" data-pagefind-body><p>Way back in my <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">first post on the solver</a>, I used N-queens as a warm-up problem: place N queens on an NxN chessboard so none of them attack each other. Recently I turned a generalized version of that puzzle into a daily game called <a href="https://dawnofthe.dad/anarchy-chess" target="_blank" rel="noopener noreferrer">Anarchy Chess</a>.</p>
+<p>Instead of eight queens, each puzzle hands you a mixed tray of queens, rooks, bishops, and knights. In Anarchy mode, the board also comes with five immovable blocks: sliding pieces (queens, rooks, and bishops) stop at blocks, while knights jump right over them. Unlike the <a href="https://blog.dawnofthe.dad/posts/visualizing-search/" rel="">sudoku</a> or <a href="https://blog.dawnofthe.dad/posts/building-the-crossword/" rel="">crossword</a> apps where you watch the solver show off, here you do the solving yourself while the Go CSP engine works backstage: verifying boards, cooking up balanced daily puzzles, and rescuing stuck players with hints.</p>
+<h2 id="why-the-n-queens-shortcut-breaks-and-64-bits-saves-the-day" class="headerLink">
+    <a href="#why-the-n-queens-shortcut-breaks-and-64-bits-saves-the-day" class="header-mark"></a>Why the N-queens shortcut breaks (and 64 bits saves the day)</h2><p>In classic N-queens, every column holds at most one queen, so you get a neat modeling shortcut: create one variable per column and only search over which row it occupies. That shortcut falls apart immediately here. Two knights or two bishops can happily share a column, and two rooks can stare right at each other on the same file as long as a block sits between them.</p>
+<p>Going back to one variable per piece with all 64 squares (<code>0..63</code>) as its domain sounds much heavier, until you notice the board size. An 8x8 chessboard has 64 squares, which means an entire piece domain, a block layout, and an attack pattern each fit inside a single <code>uint64</code>. All of the <a href="https://blog.dawnofthe.dad/posts/faster-search/" rel="">bitset domain</a> and <a href="https://blog.dawnofthe.dad/posts/bitmask-propagation/" rel="">bitmask propagation</a> machinery I built for 15,000-word crossword domains drops down to single-register instructions here.</p>
+<p>There is one catch when precomputing those masks: once you mix piece types, attacks stop being symmetric. Suppose search places a knight on <code>d4</code>, we still have an unplaced queen waiting in the tray, and <code>d6</code> and <code>f4</code> have blocks:</p>
+<p><a class="lightgallery" href="/anarchy-conflict-mask.svg" title="Asymmetric conflict bitmask with blocked squares" data-thumbnail="/anarchy-conflict-mask.svg" data-light-src="/anarchy-conflict-mask.svg" data-dark-src="/anarchy-conflict-mask-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/anarchy-conflict-mask.svg" alt="Asymmetric conflict bitmask with blocked squares">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/anarchy-conflict-mask-dark.svg" alt="Asymmetric conflict bitmask with blocked squares"></a></p>
+<p>Crossing off the eight squares the knight attacks (left board) isn&rsquo;t enough. The knight doesn&rsquo;t attack <code>d1</code> or <code>a7</code>, yet dropping a queen on either square would immediately skewer the knight on <code>d4</code>. For any pair of pieces, the forbidden mask for the second piece has to combine both directions: squares the placed piece attacks <em>and</em> squares from which the second piece&rsquo;s rays would reach back to hit it (middle board).</p>
+<p>Look at the green squares (<code>d7</code>, <code>d8</code>, <code>g4</code>, <code>h4</code>) on that middle board, though. On an open chessboard, a queen on <code>d8</code> or <code>h4</code> would snipe <code>d4</code> straight down the file or rank. With blocks on <code>d6</code> and <code>f4</code>, those rays stop cold, leaving all four squares behind them completely legal for the queen - even as the knight&rsquo;s own L-jumps hop right past <code>d6</code> and <code>f4</code> to threaten <code>c6</code>, <code>e6</code>, <code>f5</code>, and <code>f3</code>.</p>
+<p>Precomputing one <code>uint64</code> <code>forbidMask</code> for every <code>(piece A, square, piece B)</code> combination bakes all of that geometry in once up front:</p>
+<div class="code-block highlight is-open show-line-numbers  tw:group tw:my-2">
+  <div class="
+    
+    tw:flex 
+    tw:flex-row
+    tw:flex-1 
+    tw:justify-between 
+    tw:w-full tw:bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw:mx-2 
+        tw:flex
+        tw:flex-row
+        tw:flex-1"
+      aria-hidden="true">
+          <span class="tw:group-[.is-open]:rotate-90 tw:transition-[transform] tw:duration-500 tw:ease-in-out tw:print:hidden! tw:w-min tw:h-min tw:my-1 tw:mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></span>
+          <span class="tw:select-none tw:my-1! tw:block">go</span>
+      </button>
+
+   <div class="tw:flex">
+      <button 
+        class="
+          line-number-button
+          tw:mx-2 
+          tw:hidden 
+          tw:group-[.is-open]:block 
+          tw:group-[.show-line-numbers]:text-fgColor-link 
+          tw:print:hidden!" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw:select-none 
+          tw:mx-2 
+          tw:hidden 
+          tw:group-[.is-open]:block 
+          tw:group-[.is-wrap]:text-fgColor-link 
+          tw:print:hidden!" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw:select-none
+          tw:mx-2 
+          tw:hidden
+          tw:group-[.is-open]:block
+          tw:hover:text-fgColor-link 
+          tw:print:hidden!"
+        title="Copy code">
+          <span class="copy-icon tw:block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw:hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw:select-none 
+          tw:mx-2 
+          tw:block 
+          tw:group-[.is-open]:hidden 
+          tw:print:hidden!" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw:block tw:m-0 tw:p-0"><code 
+    id="codeblock-id-1" 
+    class="
+      chroma 
+      tw:block! 
+      tw:p-0
+      tw:m-0
+      tw:transition-[max-height] 
+      tw:duration-500 
+      tw:ease-in-out 
+      tw:group-[.is-closed]:max-h-0! 
+      tw:group-[.is-wrap]:text-wrap
+      tw:overflow-y-hidden
+      tw:overflow-x-auto
+      tw:scrollbar-thin
+      "><span class="line"><span class="cl"><span class="nx">forbidMask</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">blocked</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nx">knightSquare</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nx">attacksFromKnight</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">for</span><span class="w"> </span><span class="nx">sq</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">queenAttacks</span><span class="p">[</span><span class="nx">sq</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nx">knightSquare</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">forbidMask</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="nb">uint64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="nx">sq</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
+</div>
+<p>Better yet, when I added the 5-block Anarchy mode later on, the solver itself needed zero new constraints or search logic. Blocks just swap in a fresh lookup table for that board&rsquo;s five blocked bits and clear those five bits from each piece&rsquo;s starting domain.</p>
+<h2 id="hiding-symmetry-breaking-inside-the-same-bitmask" class="headerLink">
+    <a href="#hiding-symmetry-breaking-inside-the-same-bitmask" class="header-mark"></a>Hiding symmetry breaking inside the same bitmask</h2><p>If a tray only had one of each piece, those conflict masks would be the whole story. Real puzzles have duplicates, though, and identical pieces are a classic trap for backtracking search.</p>
+<p>Say a puzzle gives you four knights. If placing them on <code>c3</code>, <code>d4</code>, <code>b6</code>, and <code>g7</code> leads to a dead end later on, swapping which knight variable sits on which of those four squares gives <code>4! = 24</code> &ldquo;different&rdquo; assignments that all produce the exact same board (with six knights, that jumps to <code>720</code>). Left to its own devices, search will dutifully explore all 24 copies of every dead end before moving on.</p>
+<p><a class="lightgallery" href="/anarchy-symmetry-mask.svg" title="Eliminating identical-piece permutations inside the same bitmask" data-thumbnail="/anarchy-symmetry-mask.svg" data-light-src="/anarchy-symmetry-mask.svg" data-dark-src="/anarchy-symmetry-mask-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/anarchy-symmetry-mask.svg" alt="Eliminating identical-piece permutations inside the same bitmask">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/anarchy-symmetry-mask-dark.svg" alt="Eliminating identical-piece permutations inside the same bitmask"></a></p>
+<p>The standard fix is to force identical pieces to land in strictly increasing square order (<code>sq(N0) &lt; sq(N1) &lt; sq(N2) &lt; sq(N3)</code>), keeping only the green ordering above. Normally you&rsquo;d enforce that by adding ordering constraints between adjacent knights, giving the propagation loop extra work on every move.</p>
+<p>Instead, because every pair of pieces already has its own 64-element <code>forbidMask</code> table, we can fold the ordering rule straight into that mask when building the problem. In the board on the right above, once <code>N0</code> lands on square <code>18</code> (<code>c3</code>), <code>N1</code>&rsquo;s mask for <code>18</code> has both <code>N0</code>&rsquo;s red L-jump attacks <em>and</em> every lower-numbered square <code>0..17</code> (slate) set to 1. One bitwise pass clears both illegal attacks and duplicate permutations at zero extra cost during search.</p>
+<p>Propagation between any two pieces then comes down to two fast cases:</p>
+<ul>
+<li>When one piece is placed on a square, its precomputed <code>uint64</code> mask clears every forbidden square from the other piece&rsquo;s domain in one instruction.</li>
+<li>Under <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">arc consistency</a> when neither piece is placed yet, the constraint bitwise-ANDs the forbid masks of every remaining live square of the first piece; any bit still set to 1 is ruled out by <em>every</em> surviving choice for the first piece, so it can be pruned from the second piece immediately.</li>
+</ul>
+<h2 id="cooking-up-daily-puzzles-and-my-oops-all-knights-phase" class="headerLink">
+    <a href="#cooking-up-daily-puzzles-and-my-oops-all-knights-phase" class="header-mark"></a>Cooking up daily puzzles (and my &ldquo;oops, all knights&rdquo; phase)</h2><p>Checking whether a tray of pieces fits on a board takes microseconds. Generating four daily puzzles (Easy, Medium, Hard, and Anarchy) that are actually enjoyable to play took a bit more trial and error.</p>
+<p>The first surprise was that raw solution count is a terrible predictor of human difficulty. A tight puzzle with only four distinct solutions can feel breezy if bad openings run out of safe squares right away, while a puzzle with forty solutions can feel miserable if every natural-looking opening walks into a subtle dead end ten pieces deep.</p>
+<p>The second surprise was what happened when I rewarded puzzles for leaving <code>0</code> unattacked empty squares without putting guardrails on the piece mix. Left unsupervised, the generator immediately fell in love with trays like &ldquo;1 queen, 1 bishop, and 13 knights&rdquo;. Knights have short, local attack patterns that pack into leftover pockets effortlessly, hitting <code>0</code> unattacked squares every time - and turning a chess puzzle into a repetitive clicking chore.</p>
+<p>To keep puzzles varied and fair, each candidate mix now goes through a small pipeline:</p>
+<p><a class="lightgallery" href="/anarchy-difficulty-calibration.svg" title="Scoring and classifying candidate daily puzzles" data-thumbnail="/anarchy-difficulty-calibration.svg" data-light-src="/anarchy-difficulty-calibration.svg" data-dark-src="/anarchy-difficulty-calibration-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/anarchy-difficulty-calibration.svg" alt="Scoring and classifying candidate daily puzzles">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/anarchy-difficulty-calibration-dark.svg" alt="Scoring and classifying candidate daily puzzles"></a></p>
+<p>First, the generator shuffles combinations of queens, rooks, and bishops <code>(Q, R, B)</code> and binary-searches for the largest number of knights that still fits, subject to a hard balance cap: at most 6 knights, never more knights than sliding pieces (<code>Q + R + B</code>), and at most 5 bishops, plus a scoring penalty whenever any single piece type takes up more than 45% of the tray. Stepping down from that tightest knight count by <code>0..4</code> naturally yields Hard, Medium, and Easy candidates from the same base mix.</p>
+<p>Each candidate then runs through three quick probes:</p>
+<ol>
+<li><strong>Solver sample (25ms cap)</strong> collects up to 120 valid solutions, checking how few unattacked empty squares remain and making sure the solutions aren&rsquo;t all just rotated or reflected copies of one layout.</li>
+<li><strong>2,500 random trials</strong> simulate a naive player by picking a random legal square for each piece in turn using pure <code>uint64</code> bitmask ops. The fraction of trials that successfully place the whole tray gives a surprisingly good feel for how forgiving the board is: at least <code>6%</code> lands in Easy, <code>1.2%</code> to <code>6%</code> lands in Medium, and below <code>1.2%</code> lands in Hard.</li>
+<li><strong>5 forward-checking probes</strong> run short randomized <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">forward-checking</a> searches with a 500-step cap. If random play almost never wins <em>and</em> search consistently burns hundreds of backtracks, the board is a needle-in-a-haystack trap and gets tossed out.</li>
+</ol>
+<p>Anarchy mode runs the same pipeline on five spread-out interior blocks (rows and columns <code>2..7</code>, spanning at least four rows and four columns so they aren&rsquo;t wasted in corners), aiming for Easy-comparable win rates. Candidates earn bonus points when sample solutions actively use blocks to shield sliding pieces from each other, and an extra boost when that exact tray of pieces would have <em>zero</em> solutions on an open board.</p>
+<p>To keep my tiny E2 micro VM out of trouble, the solver server pre-generates a rolling 7-day horizon in the background and saves each day&rsquo;s JSON to disk, so live traffic just reads ready-made puzzles from memory.</p>
+<h2 id="powering-hints-when-players-go-off-script" class="headerLink">
+    <a href="#powering-hints-when-players-go-off-script" class="header-mark"></a>Powering hints when players go off-script</h2><p>Hints are the one place where the solver runs live on every click. At first glance a hint sounds trivial: we already solved the puzzle during generation, so why not store one solution and reveal a piece from it?</p>
+<p>Because players don&rsquo;t read the solver&rsquo;s mind. Most boards have several distinct solutions, and if you&rsquo;ve already placed five pieces of your own, a hint that ignores your board isn&rsquo;t much of a hint. Worse, it is very easy to place five pieces with zero red attack lines between them and still be walking dead because the remaining pieces in your tray can no longer coexist in the leftover space. Saying &ldquo;no valid move&rdquo; there is technically accurate and completely unhelpful; the player needs to know <em>which piece to pick back up</em>.</p>
+<p>So every hint request hands the player&rsquo;s current board straight to the solver:</p>
+<p><a class="lightgallery" href="/anarchy-hint-flow.svg" title="Constructive vs. corrective hint pipeline" data-thumbnail="/anarchy-hint-flow.svg" data-light-src="/anarchy-hint-flow.svg" data-dark-src="/anarchy-hint-flow-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/anarchy-hint-flow.svg" alt="Constructive vs. corrective hint pipeline">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/anarchy-hint-flow-dark.svg" alt="Constructive vs. corrective hint pipeline"></a></p>
+<p>When none of the placed pieces attack each other, the solver locks them in as single-square domains and searches for a completion using a randomized value order. If one exists, we take the <strong>constructive</strong> path and reveal one unplaced piece from that completion, always preferring the most constraining piece left in the tray (<code>Queen -&gt; Rook -&gt; Bishop -&gt; Knight</code>), since showing where a queen fits unlocks far more of the board than dropping a knight into a corner.</p>
+<p>When the board already has a conflict or no completion exists, the hint flips to <strong>corrective</strong> mode and hunts for a culprit piece to remove in three quick stages:</p>
+<ol>
+<li><strong>Drop 1 piece</strong> tests removing one placed piece at a time (checking pieces involved in direct attacks and the player&rsquo;s most recent moves first) with a 20ms cap per check. As soon as the remaining board becomes solvable, it flags that piece for removal.</li>
+<li><strong>Drop 2 pieces</strong> kicks in if no single removal saves the board, testing pairs in the same priority order within a 60ms total budget and flagging one of the two so the player makes progress right away.</li>
+<li><strong>Closest solve</strong> is the safety net if a player has painted themselves three or four moves deep into a corner: it solves the empty board from scratch using a custom value heuristic that tries the player&rsquo;s currently occupied squares first, preserving as much of their setup as possible, and flags one placed piece that doesn&rsquo;t belong.</li>
+</ol>
+<p>Because a single 8x8 solve usually finishes in well under a millisecond, even a multi-stage corrective hint comes back instantaneously.</p>
+<h2 id="wrapping-up" class="headerLink">
+    <a href="#wrapping-up" class="header-mark"></a>Wrapping up</h2><p>My favorite part of building Anarchy Chess was how little custom solver code it actually needed. Once the 64-square board, block-aware conflict rays, and identical-piece ordering were packed into <code>uint64</code> bitmasks, the exact same small CSP core handled solving, difficulty calibration, Anarchy board generation, and live hints.</p>
+<p>I skipped over the frontend, daily archive, and timer/leaderboard setup here to keep this post focused on the solver side, so I may write those up separately later. In the meantime, if you want to give today&rsquo;s boards a spin, they&rsquo;re live at <a href="https://dawnofthe.dad/anarchy-chess" target="_blank" rel="noopener noreferrer">dawnofthe.dad/anarchy-chess</a>, and thanks for reading!</p></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2026-11-18</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line tw:print:hidden!">
+            <div class="post-info-md"></div>
+            <div class="post-info-share"></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <div class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/algorithms/">Algorithms</a>,&nbsp;<a href="/tags/go/">Go</a></div>
+        <div class="tw:print:hidden!">
+            <span><button class="tw:text-fgColor-link-muted tw:hover:text-fgColor-link-muted-hover" onclick="window.history.back();">Back</button></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </div>
+    </div>
+
+    <div class="post-nav tw:print:hidden"><a href="/posts/flattening-search-state/" class="prev" rel="prev" title="Faster Search: Flattening State and Backjumping"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>Faster Search: Flattening State and Backjumping</a></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.170.1">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 1.0.2"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg> DoIt</a>
+                </div><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2026<span class="author">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">Andrei</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="Back to Top">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a></div><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/lightgallery/lightgallery.min.css">
+        <noscript><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></noscript>
+<script>window.config={"comment":{},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true}};</script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/lightgallery-theme.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script>
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-WS2FCBYJLF');
+        </script><script
+    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
+    async
+  ></script><script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
+</body>
+
+</html>

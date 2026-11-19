@@ -3,7 +3,17 @@
         <title>Constructive Search - Category - Blog of the Dad</title>
         <link>https://blog.dawnofthe.dad/categories/constructive-search/</link>
         <description>Constructive Search - Category - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Nov 2026 22:25:00 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 18 Nov 2026 21:10:00 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/categories/constructive-search/" rel="self" type="application/rss+xml" /><item>
+    <title>Building Anarchy Chess: The Solver</title>
+    <link>https://blog.dawnofthe.dad/posts/anarchy-chess-solver/</link>
+    <pubDate>Wed, 18 Nov 2026 21:10:00 -0800</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/anarchy-chess-solver/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/anarchy-chess-solver-header.svg" referrerpolicy="no-referrer">
+            </div><p>Way back in my <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">first post on the solver</a>, I used N-queens as a warm-up problem: place N queens on an NxN chessboard so none of them attack each other. Recently I turned a generalized version of that puzzle into a daily game called <a href="https://dawnofthe.dad/anarchy-chess" target="_blank" rel="noopener noreferrer">Anarchy Chess</a>.</p>
+<p>Instead of eight queens, each puzzle hands you a mixed tray of queens, rooks, bishops, and knights. In Anarchy mode, the board also comes with five immovable blocks: sliding pieces (queens, rooks, and bishops) stop at blocks, while knights jump right over them. Unlike the <a href="https://blog.dawnofthe.dad/posts/visualizing-search/" rel="">sudoku</a> or <a href="https://blog.dawnofthe.dad/posts/building-the-crossword/" rel="">crossword</a> apps where you watch the solver show off, here you do the solving yourself while the Go CSP engine works backstage: verifying boards, cooking up balanced daily puzzles, and rescuing stuck players with hints.</p>]]></description>
+</item><item>
     <title>Faster Search: Flattening State and Backjumping</title>
     <link>https://blog.dawnofthe.dad/posts/flattening-search-state/</link>
     <pubDate>Mon, 16 Nov 2026 22:25:00 -0800</pubDate><author>
@@ -97,14 +107,5 @@
         <name>Andrei</name>
     </author><guid>https://blog.dawnofthe.dad/posts/search-algo-in-go/</guid>
     <description><![CDATA[<p>My previous couple of posts talked about <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">what the solver does (solves CSPs)</a>, <a href="https://blog.dawnofthe.dad/posts/solver-basics/" rel="">how to model a problem as a CSP, and how the search tree is built</a> as the solver searches for a solution. In this post I will expand on the details of search by outlining the key data structures and bits of code. The backend is written in <a href="https://go.dev" target="_blank" rel="noopener noreferrer">Go lang</a>, and so are all of the code snippets here.</p>]]></description>
-</item><item>
-    <title>Solver basics</title>
-    <link>https://blog.dawnofthe.dad/posts/solver-basics/</link>
-    <pubDate>Sat, 02 Sep 2023 12:49:25 -0700</pubDate><author>
-        <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/solver-basics/</guid>
-    <description><![CDATA[<div class="featured-image">
-                <img src="/thinking.png" referrerpolicy="no-referrer">
-            </div><p>In the <a href="https://blog.dawnofthe.dad/posts/solver-intro/" rel="">previous post</a> I&rsquo;ve given a quick overview of what the solver is about, and in this post I&rsquo;ll dive a little bit deeper into the subject, using N-queens with just 4 queens as an example problem. More specifically, I&rsquo;ll fully specify the problem by defining the variables and constraints, and then walk through what a simple search would do, ultimately finding a solution.</p>]]></description>
 </item></channel>
 </rss>

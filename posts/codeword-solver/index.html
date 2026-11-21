@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" /><title>Building Codeword: The Solver - Blog of the Dad</title><meta name="Description" content="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go"><meta property="og:url" content="https://blog.dawnofthe.dad/posts/codeword-solver/">
+	<meta property="og:site_name" content="Blog of the Dad">
+	<meta property="og:title" content="Building Codeword: The Solver">
+	<meta property="og:description" content="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go">
+	<meta property="og:locale" content="en">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-11-21T12:55:00-08:00">
+		<meta property="article:modified_time" content="2026-11-21T12:55:00-08:00">
+		<meta property="article:tag" content="Algorithms">
+		<meta property="article:tag" content="Go">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Building Codeword: The Solver">
+	<meta name="twitter:description" content="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go">
+<meta name="application-name" content="Blog of the Dad">
+<meta name="apple-mobile-web-app-title" content="Blog of the Dad">
+
+<meta name="theme-color" content="#f8f8f8"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" >
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<link rel="canonical" href="https://blog.dawnofthe.dad/posts/codeword-solver/" ><link rel="prev" href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/" >
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+        "headline": "Building Codeword: The Solver",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://blog.dawnofthe.dad/posts/codeword-solver/"
+        },"image": ["https://blog.dawnofthe.dad/codeword-solver-header.svg"],"genre": "posts","keywords":["Algorithms","Go"],"wordcount":  2043 ,
+        "url": "https://blog.dawnofthe.dad/posts/codeword-solver/","datePublished": "2026-11-21T12:55:00-08:00","dateModified": "2026-11-21T12:55:00-08:00","publisher": {
+            "@type": "Organization",
+            "name": "Andrei"},"author": {
+                "@type": "Person",
+                "name": "Andrei",
+                "url": "/"
+            },"description": "Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go"
+    }</script></head>
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        function syncThemeFromStorage() {
+            if (window.localStorage && localStorage.getItem('theme')) {
+                let theme = localStorage.getItem('theme');
+                if (theme === 'light' || theme === 'dark') {
+                    setTheme(theme);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            } else {
+                if ('' === 'light' || '' === 'dark')
+                    setTheme(''), saveTheme('');
+                else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+            }
+            let metaColors = {'light': '#f8f8f8','dark': '#161b22'};
+            let themeMeta = getMeta('theme-color');
+            if (themeMeta) themeMeta.content = metaColors[document.body.getAttribute('theme')];
+        }
+        syncThemeFromStorage();
+        window.switchThemeEventSet = new Set();
+        document.addEventListener('prerenderingchange', syncThemeFromStorage);
+        window.addEventListener('pageshow', function (e) { if (e.persisted) syncThemeFromStorage(); });
+        window.addEventListener('storage', function (e) { if (e.key === 'theme') syncThemeFromStorage(); });
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop tw:print:hidden!" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Blog of the Dad"><img class="tw:inline tw:align-text-bottom tw:mr-1" src="/android-chrome-192x192.png" alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > Posts </a><a class="menu-item"
+                    href="/tags/" > Tags </a><a class="menu-item"
+                    href="/categories/" > Categories </a><span class="menu-item delimiter"></span><button class="menu-item theme-switch" aria-label="Switch Theme">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                </button></div>
+        </div>
+    </div>
+</header><header class="mobile tw:print:hidden!" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Blog of the Dad"><img class="tw:inline tw:align-text-bottom tw:mr-1" src="/android-chrome-192x192.png" alt="Blog of the Dad" height="32" width="32">Blog of the Dad</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="" >Posts</a><a class="menu-item" href="/tags/" title="" >Tags</a><a class="menu-item" href="/categories/" title="" >Categories</a><button class="menu-item theme-switch tw:w-full" aria-label="Switch Theme">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+            </button></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+            <div class="container"><div class="toc tw:print:hidden!" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#modeling-a-codeword-as-a-csp">Modeling a codeword as a CSP</a></li>
+    <li><a href="#generating-daily-puzzles-that-feel-fair-to-humans">Generating daily puzzles that feel fair to humans</a>
+      <ul>
+        <li><a href="#filling-a-26-letter-grid-from-everyday-words">Filling a 26-letter grid from everyday words</a></li>
+        <li><a href="#simulating-a-human-to-pick-starter-letters">Simulating a human to pick starter letters</a></li>
+        <li><a href="#proving-uniqueness-against-an-85000-word-dictionary">Proving uniqueness against an 85,000-word dictionary</a></li>
+      </ul>
+    </li>
+    <li><a href="#hints-clearing-bad-guesses-and-picking-useful-reveals">Hints: clearing bad guesses and picking useful reveals</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+    </div><dialog id="toc-dialog" class="tw:max-w-full tw:w-full tw:max-h-full tw:h-full tw:ml-16">
+        <div class="toc tw:mx-4 tw:max-w-full">
+            <h2 class="tw:mx-0 tw:my-6 tw:uppercase tw:text-2xl">Contents</h2>
+            <div class="toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#modeling-a-codeword-as-a-csp">Modeling a codeword as a CSP</a></li>
+    <li><a href="#generating-daily-puzzles-that-feel-fair-to-humans">Generating daily puzzles that feel fair to humans</a>
+      <ul>
+        <li><a href="#filling-a-26-letter-grid-from-everyday-words">Filling a 26-letter grid from everyday words</a></li>
+        <li><a href="#simulating-a-human-to-pick-starter-letters">Simulating a human to pick starter letters</a></li>
+        <li><a href="#proving-uniqueness-against-an-85000-word-dictionary">Proving uniqueness against an 85,000-word dictionary</a></li>
+      </ul>
+    </li>
+    <li><a href="#hints-clearing-bad-guesses-and-picking-useful-reveals">Hints: clearing bad guesses and picking useful reveals</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+        </div>
+    </dialog><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single tw:print:w-full! tw:print:max-w-none! tw:print:m-0! tw:print:p-0!"><h1 class="single-title" data-pagefind-meta="date:2026-11-21" data-pagefind-body>Building Codeword: The Solver</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw:inline-block tw:max-h-4 tw:rounded-full tw:translate-y-[-2px] tw:mr-1" src="/drd.jpg" alt="Andrei avatar" height="16" width="16"><a href="/" title="Author" rel=" author" class="author">Andrei</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/constructive-search/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Constructive Search</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2026-11-21">2026-11-21</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2043 words&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="featured-image"><a class="lightgallery" href="/codeword-solver-header.svg" title="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go" data-thumbnail="/codeword-solver-header.svg" data-light-src="/codeword-solver-header.svg" data-dark-src="/codeword-solver-header-dark.svg" data-width="2400"><img class="theme-img-light" loading="eager" src="/codeword-solver-header.svg" alt="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go">
+<img class="theme-img-dark" loading="eager" src="/codeword-solver-header-dark.svg" alt="Modeling clue-less cipher crosswords, human-calibrated daily puzzles, and live hints in Go"></a></div><div class="details toc tw:print:block!" id="toc-static" data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#modeling-a-codeword-as-a-csp">Modeling a codeword as a CSP</a></li>
+    <li><a href="#generating-daily-puzzles-that-feel-fair-to-humans">Generating daily puzzles that feel fair to humans</a>
+      <ul>
+        <li><a href="#filling-a-26-letter-grid-from-everyday-words">Filling a 26-letter grid from everyday words</a></li>
+        <li><a href="#simulating-a-human-to-pick-starter-letters">Simulating a human to pick starter letters</a></li>
+        <li><a href="#proving-uniqueness-against-an-85000-word-dictionary">Proving uniqueness against an 85,000-word dictionary</a></li>
+      </ul>
+    </li>
+    <li><a href="#hints-clearing-bad-guesses-and-picking-useful-reveals">Hints: clearing bad guesses and picking useful reveals</a></li>
+    <li><a href="#wrapping-up">Wrapping up</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content" data-pagefind-body><p>After building <a href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/" rel="">Anarchy Chess</a>, I wanted a daily word game to pair with it and landed on <a href="https://dawnofthe.dad/codeword" target="_blank" rel="noopener noreferrer">Codeword</a>. A codeword starts with an open 13x13 crossword grid (around 120 white squares) with all of the clues removed. Instead, every white square carries a number from <code>#1</code> to <code>#26</code>. Those numbers form a 1-to-1 substitution cipher for the alphabet: each number stands for one distinct letter from A to Z, all 26 letters appear somewhere on the grid, and typing L onto <code>#2</code> fills every <code>#2</code> square across the board.</p>
+<p>Only two to four starter letters are revealed at the start, so cracking the rest is all about spotting word patterns and crossing letters. Under the hood, the Go CSP solver builds each day&rsquo;s grids, checks that a human can deduce all 26 letters step by step without guessing, proves no second solution exists, and powers hints.</p>
+<h2 id="modeling-a-codeword-as-a-csp" class="headerLink">
+    <a href="#modeling-a-codeword-as-a-csp" class="header-mark"></a>Modeling a codeword as a CSP</h2><p>In the <a href="https://blog.dawnofthe.dad/posts/building-the-crossword/" rel="">crossword builder</a>, each Across or Down word is a variable over dictionary words of that length, and two words only interact when they cross on a shared square. Codewords break that locality: every <code>#5</code> square has to take the same letter whether two <code>#5</code> squares sit inside the same word or on opposite corners of the board, while <code>#5</code> and <code>#12</code> can never share a letter even if their words never touch.</p>
+<p>Going the other way - creating <em>only</em> 26 variables for <code>#1</code> through <code>#26</code> over A to Z - makes the 1-to-1 alphabet rule trivial, but checking dictionary words across many letter variables at once would be much less efficient to propagate (and I didn&rsquo;t want to build custom multi-variable word constraints for it).</p>
+<p>Keeping <em>both</em> sets of variables makes every constraint small and fast:</p>
+<ul>
+<li><strong>26 number variables</strong> (<code>#1</code> through <code>#26</code>, each tracking live letters A to Z), tied together by a single <a href="https://blog.dawnofthe.dad/posts/all-different-variants/" rel="">bipartite <em>all-different</em></a> constraint so maximum matching immediately catches impossible letter squeezes, such as three numbers narrowed down to the same two letters.</li>
+<li><strong>One word variable per Across or Down word</strong>, restricted up front to dictionary words that match the pattern of its numbers. For instance, <code>[10, 7, 3, 1, 4]</code> requires five distinct letters (matching &ldquo;crane&rdquo;, skipping &ldquo;apple&rdquo; and &ldquo;sleet&rdquo;), while <code>[3, 5, 5, 2, 4]</code> requires identical 2nd and 3rd letters with the other three distinct - so only five-letter words with that exact pattern, like &ldquo;alley&rdquo;, &ldquo;apple&rdquo;, or &ldquo;otter&rdquo;, enter its domain before search even starts.</li>
+</ul>
+<p><a class="lightgallery" href="/codeword-csp-model.svg" title="Two variable sets, zero word-to-word crossing constraints" data-thumbnail="/codeword-csp-model.svg" data-light-src="/codeword-csp-model.svg" data-dark-src="/codeword-csp-model-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/codeword-csp-model.svg" alt="Two variable sets, zero word-to-word crossing constraints">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/codeword-csp-model-dark.svg" alt="Two variable sets, zero word-to-word crossing constraints"></a></p>
+<p>Wiring each word directly to the number variables inside its cells buys two nice simplifications over a standard crossword model. First, <strong>word-to-word crossing constraints disappear completely</strong>: whenever two words share <code>#2</code> or <code>#4</code> - whether they intersect on that square or sit in separate corners of the grid - both words link to the same <code>#2</code> and <code>#4</code> variables, keeping the entire board in sync through the numbers themselves. Second, <strong>a repeated number inside a word only needs one link</strong>: in <code>[3, 5, 5, 2, 4]</code>, <code>#5</code> only links once, since every candidate in that word&rsquo;s pattern-filtered list already has matching 2nd and 3rd letters.</p>
+<p>Each pattern-filtered word list builds the same precomputed per-position <code>[]uint64</code> letter bitmasks (<code>ByPosAndLetter</code>) from <a href="https://blog.dawnofthe.dad/posts/bitmask-propagation/" rel="">bitmask propagation</a>, so each link between a word and a number propagates cleanly in both directions:</p>
+<ul>
+<li><strong>Number to word</strong>: locking <code>#3</code> to A clears every candidate without A in that position in a single bitmask pass. When <code>#3</code> still has several possible letters under <a href="https://blog.dawnofthe.dad/posts/constraint-propagation/" rel="">arc consistency</a>, it uses the <a href="https://blog.dawnofthe.dad/posts/bitmask-propagation/#when-neither-word-is-assigned-arc-consistency" rel="">same shortcut as crossword overlaps</a> - either pruning words with ruled-out letters or keeping words with still-allowed letters, whichever scans fewer bitmasks (at most 13).</li>
+<li><strong>Word to number</strong>: when candidates are pruned from an unassigned word, each linked number checks whether <em>any</em> surviving candidate still uses each of its remaining letters (testing <code>liveBits &amp; mask != 0</code>, just like before), dropping any letter that lost its last supporting word.</li>
+</ul>
+<p>Right before constructing the full CSP, the solver runs a quick up-front pass over 26-bit <code>uint32</code> letter masks, alternating word-list filtering with single-letter and two-letter pair eliminations (if two numbers narrow down to <code>{Q, Z}</code>, no other number can take Q or Z). That pass shrinks the candidate lists and bitmasks handed to the solver, and on a well-seeded board it often resolves nearly the whole alphabet on its own. The full CSP with bipartite <em>all-different</em> and <a href="https://blog.dawnofthe.dad/posts/flattening-search-state/" rel="">backjumping</a> earns its keep during uniqueness proofs, when a candidate board with only two starter letters has to be searched exhaustively against 85,000 words to make sure no second solution hides anywhere.</p>
+<h2 id="generating-daily-puzzles-that-feel-fair-to-humans" class="headerLink">
+    <a href="#generating-daily-puzzles-that-feel-fair-to-humans" class="header-mark"></a>Generating daily puzzles that feel fair to humans</h2><p>Each day needs three 13x13 puzzles - Easy, Medium, and Hard - built on 180-degree symmetric grids (~120 white squares across ~28 words, each at least four letters long) where all 26 letters appear on the board:</p>
+<p><a class="lightgallery" href="/codeword-generation-pipeline.svg" title="Generating and calibrating daily codeword puzzles" data-thumbnail="/codeword-generation-pipeline.svg" data-light-src="/codeword-generation-pipeline.svg" data-dark-src="/codeword-generation-pipeline-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/codeword-generation-pipeline.svg" alt="Generating and calibrating daily codeword puzzles">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/codeword-generation-pipeline-dark.svg" alt="Generating and calibrating daily codeword puzzles"></a></p>
+<h3 id="filling-a-26-letter-grid-from-everyday-words" class="headerLink">
+    <a href="#filling-a-26-letter-grid-from-everyday-words" class="header-mark"></a>Filling a 26-letter grid from everyday words</h3><p>In a regular crossword, a clever clue can rescue an obscure word. In a clue-less codeword, running into unfamiliar crossword filler or proper nouns feels unfair because letter patterns are all you have. To keep grids recognizable, the generator builds tiered word lists by combining word-quality scores with how often a word appears across eight mainstream newspaper crosswords and whether it belongs to a normal English word family (<code>-s</code>, <code>-ed</code>, <code>-ing</code>, and so on), dropping proper nouns along the way. Easy pulls strictly from household words, while Medium and Hard widen the vocabulary slightly.</p>
+<p>Left to its own devices, filling a 13x13 grid from common words packs the board with friendly vowels and consonants, leaving out Q, Z, J, or X almost every time. Rather than inventing a global constraint to count distinct letters across the whole grid, the generator picks six distinct random words before starting search, assigns one of Q, Z, J, X, K, or V to each word, and prunes every candidate from that word&rsquo;s domain that doesn&rsquo;t contain its assigned rare letter.</p>
+<p>Each fill attempt then runs a 75ms branch-and-bound search favoring higher-scoring words, with exponential restarts. On the rare attempt where a completed grid dodges a mid-frequency letter like W or B, the retry loop tacks any missing letters onto the required list for the next try. Once all 26 letters land on the board with no duplicate words, a random shuffle maps A through Z onto <code>#1</code> through <code>#26</code>.</p>
+<h3 id="simulating-a-human-to-pick-starter-letters" class="headerLink">
+    <a href="#simulating-a-human-to-pick-starter-letters" class="header-mark"></a>Simulating a human to pick starter letters</h3><p>Picking which starter letters to reveal turned out to be the trickiest part. Just like raw solution count in Anarchy Chess, the solver&rsquo;s own propagation is a terrible yardstick for human difficulty. Arc consistency happily intersects 4,000-word candidate lists across completely blank rows to deduce letters before a single word is readable. Humans don&rsquo;t intersect dictionary lists across blank words in their heads - and going too far in the other direction, like giving away E, can pre-fill 20+ squares at once and make the entire board snowball on turn one.</p>
+<p>Instead, candidate starter sets are graded by a step-by-step human solve simulator:</p>
+<ul>
+<li>A round may only deduce letters from words that <em>already have at least one known letter on the board</em>, so deductions have to spread outward from visible footholds rather than jumping across blank regions.</li>
+<li>A partially filled word only yields new letters when the surviving candidates in that tier&rsquo;s dictionary narrow down to a single word on Easy and Medium (or at most two words that agree on a letter on Hard), plus the free 26th letter once 25 are placed.</li>
+</ul>
+<p>To guarantee a fair foothold, at least two starter letters are clustered inside a familiar 4-to-7-letter opening word while targeting tight caps on how many of the ~120 white squares start pre-filled:</p>
+<ul>
+<li><strong>Easy</strong> reveals 4 starters (1 non-E vowel and 3 consonants), targeting at most 20 pre-filled squares and at least two immediate single-match opening words.</li>
+<li><strong>Medium</strong> reveals 3 starters (2 in an opening word plus 1 consonant elsewhere, never E or two vowels), targeting at most 14 pre-filled squares so roughly 88% of white squares start blank.</li>
+<li><strong>Hard</strong> reveals just 2 consonant starters sharing one opening word, targeting at most 8 pre-filled squares (~93% blank) with at least one single-match opening word before widening to 2-word steps.</li>
+</ul>
+<h3 id="proving-uniqueness-against-an-85000-word-dictionary" class="headerLink">
+    <a href="#proving-uniqueness-against-an-85000-word-dictionary" class="header-mark"></a>Proving uniqueness against an 85,000-word dictionary</h3><p>Even when the human simulator solves all 26 letters cleanly inside its tier list, a freshly filled grid is <em>not</em> guaranteed to have only one valid solution overall. Suppose <code>#17</code> only appears once on the board in <code>_UMP</code> and <code>#23</code> only appears once in <code>_ADE</code>: unless a starter letter pins one of them down, <code>#17=J, #23=B</code> (&ldquo;jump&rdquo; and &ldquo;bade&rdquo;) and <code>#17=B, #23=J</code> (&ldquo;bump&rdquo; and &ldquo;jade&rdquo;) are both completely valid 26-letter solutions.</p>
+<p>Every candidate starter set therefore locks its starters into the full CSP and searches for up to two solutions (with a 120ms cap), rejecting the starter set the moment a second valid mapping turns up - and discarding the entire grid if no starter set can make it unique. Testing uniqueness against the 10,000-word Easy list wouldn&rsquo;t be enough either, since a player might spot a valid English word outside that smaller tier that completes a second swap, so this check always runs against a broad ~85,000-word verification dictionary.</p>
+<p>To keep my tiny E2 micro VM happy, the server pre-generates a rolling 7-day window of these daily sets in the background, and ships only a SHA-256 hash of the 26-letter mapping to the browser so wins verify locally without exposing the answer in DevTools.</p>
+<h2 id="hints-clearing-bad-guesses-and-picking-useful-reveals" class="headerLink">
+    <a href="#hints-clearing-bad-guesses-and-picking-useful-reveals" class="header-mark"></a>Hints: clearing bad guesses and picking useful reveals</h2><p>In <a href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/#powering-hints-when-players-go-off-script" rel="">Anarchy Chess</a>, most puzzles have dozens of valid solutions, so every hint click has to re-solve from the player&rsquo;s current board. Codewords get a nice payoff from the uniqueness proof done during generation: because every puzzle has a single valid 26-letter solution, any placed letter that disagrees with it is guaranteed to be a dead end.</p>
+<p>That lets live hints follow a corrective-first, constructive-second flow with zero search overhead:</p>
+<p><a class="lightgallery" href="/codeword-hint-flow.svg" title="Corrective-first, constructive-second hint flow" data-thumbnail="/codeword-hint-flow.svg" data-light-src="/codeword-hint-flow.svg" data-dark-src="/codeword-hint-flow-dark.svg" data-width="2400"><img class="tw:inline theme-img-light" loading="lazy" src="/codeword-hint-flow.svg" alt="Corrective-first, constructive-second hint flow">
+<img class="tw:inline theme-img-dark" loading="lazy" src="/codeword-hint-flow-dark.svg" alt="Corrective-first, constructive-second hint flow"></a></p>
+<p>The UI already stops you from typing the same letter onto two different numbers (flashing the existing square instead, with the backend rejecting duplicate-letter payloads outright), so a board can never have duplicate-letter clashes. You can still easily put an unused letter onto the wrong number, though - say guessing R on <code>#12</code> when <code>#12</code> is actually T. Revealing <code>#8 = R</code> on top of that would collide with <code>#12</code>, and leaving <code>#12 = R</code> in place lets bad crossings pile up anyway. Whenever any placed letter disagrees with the solution, the hint takes the <strong>corrective</strong> path first and flags a wrong number to clear.</p>
+<p>Once every placed letter on the board matches the solution, the hint switches to the <strong>constructive</strong> path and reveals one unassigned number. Picking at random can reveal a lone Z at the end of two blank words and leave you just as stuck, while blindly picking the most frequent number dumps a 20-cell E across the board and spoils half the puzzle.</p>
+<p>Instead, each unassigned number is scored by combining a capped cell-count bonus (2 points per occurrence, capped at 6 cells = 12 points) with a completion bonus for every word containing that number that <em>already has at least one letter filled in</em>:</p>
+<ul>
+<li><code>+20</code> if it is the last missing letter in that word, finishing it on the spot.</li>
+<li><code>+12</code> if 2 blanks remain, turning an almost-there word into an easy 1-blank finish.</li>
+<li><code>+4</code> if 3 or more blanks remain in a word you&rsquo;ve started.</li>
+</ul>
+<p>Capping the cell-count bonus at 12 points ensures finishing a 1-blank word (<code>+20</code>) always beats dumping a 20-cell E onto untouched words, steering hints toward finishing a word you&rsquo;re actively working on so its crossings open up naturally.</p>
+<h2 id="wrapping-up" class="headerLink">
+    <a href="#wrapping-up" class="header-mark"></a>Wrapping up</h2><p>Codeword ended up being a rewarding test of how reusable the solver&rsquo;s building blocks really were. Pre-filtering words by number pattern let the model reuse the exact <code>[]uint64</code> letter bitmasks from the crossword builder without needing crossing constraints, bipartite <em>all-different</em> over the 26 numbers kept broad uniqueness checks fast, and pairing curated generation word lists with an 85,000-word verification dictionary kept clue-less grids fair without leaving second solutions open.</p>
+<p>I skipped over the frontend, daily archive, and leaderboard setup here to keep the focus on the solver side. If you want to give today&rsquo;s puzzles a try, they&rsquo;re up at <a href="https://dawnofthe.dad/codeword" target="_blank" rel="noopener noreferrer">dawnofthe.dad/codeword</a>, and thanks for reading!</p></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2026-11-21</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line tw:print:hidden!">
+            <div class="post-info-md"></div>
+            <div class="post-info-share"></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <div class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/algorithms/">Algorithms</a>,&nbsp;<a href="/tags/go/">Go</a></div>
+        <div class="tw:print:hidden!">
+            <span><button class="tw:text-fgColor-link-muted tw:hover:text-fgColor-link-muted-hover" onclick="window.history.back();">Back</button></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </div>
+    </div>
+
+    <div class="post-nav tw:print:hidden"><a href="/posts/anarchy-chess-solver/" class="prev" rel="prev" title="Building Anarchy Chess: The Solver"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>Building Anarchy Chess: The Solver</a></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.170.1">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 1.0.2"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg> DoIt</a>
+                </div><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2026<span class="author">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">Andrei</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="Back to Top">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a></div><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/lightgallery/lightgallery.min.css">
+        <noscript><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></noscript>
+<script>window.config={"comment":{},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true}};</script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/lightgallery-theme.js"
+    
+      defer
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script>
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-WS2FCBYJLF');
+        </script><script
+    src="https://www.googletagmanager.com/gtag/js?id=G-WS2FCBYJLF"
+    async
+  ></script><script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
+</body>
+
+</html>

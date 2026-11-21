@@ -3,9 +3,19 @@
         <title>Blog of the Dad</title>
         <link>https://blog.dawnofthe.dad/</link>
         <description>Technical website about dawnofthe.dad and the like</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 18 Nov 2026 21:10:00 -0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 12:55:00 -0800</lastBuildDate>
             <atom:link href="https://blog.dawnofthe.dad/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Building Codeword: The Solver</title>
+    <link>https://blog.dawnofthe.dad/posts/codeword-solver/</link>
+    <pubDate>Sat, 21 Nov 2026 12:55:00 -0800</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/codeword-solver/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/codeword-solver-header.svg" referrerpolicy="no-referrer">
+            </div><p>After building <a href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/" rel="">Anarchy Chess</a>, I wanted a daily word game to pair with it and landed on <a href="https://dawnofthe.dad/codeword" target="_blank" rel="noopener noreferrer">Codeword</a>. A codeword starts with an open 13x13 crossword grid (around 120 white squares) with all of the clues removed. Instead, every white square carries a number from <code>#1</code> to <code>#26</code>. Those numbers form a 1-to-1 substitution cipher for the alphabet: each number stands for one distinct letter from A to Z, all 26 letters appear somewhere on the grid, and typing L onto <code>#2</code> fills every <code>#2</code> square across the board.</p>
+<p>Only two to four starter letters are revealed at the start, so cracking the rest is all about spotting word patterns and crossing letters. Under the hood, the Go CSP solver builds each day&rsquo;s grids, checks that a human can deduce all 26 letters step by step without guessing, proves no second solution exists, and powers hints.</p>]]></description>
+</item><item>
     <title>Building Anarchy Chess: The Solver</title>
     <link>https://blog.dawnofthe.dad/posts/anarchy-chess-solver/</link>
     <pubDate>Wed, 18 Nov 2026 21:10:00 -0800</pubDate><author>
@@ -101,13 +111,5 @@
                 <img src="/ndoku-in-progress.png" referrerpolicy="no-referrer">
             </div><p>Part of the appeal of building a solver for the fourth time (?!) for me is that it&rsquo;s fun to watch how it solves the problem. While it&rsquo;s possible and quick to hack something up on command line, the results aren&rsquo;t that pretty and can&rsquo;t be easily shared. In this post I&rsquo;ll talk about building a frontend that talks to the backend via websockets and produces an animated visualization of how the search is solving the problem.</p>
 <p>The scope of this post, and my initial frontend, is generalized NxN sudokus, and this first iteration of the frontend focused on largely non-interactive visualization. You can <a href="https://dawnofthe.dad/ndoku" target="_blank" rel="noopener noreferrer">try it out for yourself online</a>. I&rsquo;ll talk about building up more interactive solvers for regular <a href="https://dawnofthe.dad/sudoku" target="_blank" rel="noopener noreferrer">sudoku</a> and <a href="https://dawnofthe.dad/crossword" target="_blank" rel="noopener noreferrer">crosswords</a> separately.</p>]]></description>
-</item><item>
-    <title>Heuristics</title>
-    <link>https://blog.dawnofthe.dad/posts/heuristics/</link>
-    <pubDate>Thu, 07 Sep 2023 17:23:19 -0700</pubDate><author>
-        <name>Andrei</name>
-    </author><guid>https://blog.dawnofthe.dad/posts/heuristics/</guid>
-    <description><![CDATA[<p>Constructive search needs to explore an exponentially large search space. In order to have any hope to find a solution, or prove that none exist, it is crucial that this exploration is done in a smart way. Problems that constructive search is applied to are NP-complete, so we don&rsquo;t have an exact way of making smart decisions about this exploration. Instead, we rely on heuristics to make <em>generally good</em> decisions, that will hopefully help us either find a solution, or prove that one does not exist quickly.</p>
-<p>There are two categories of these heuristics - variable ordering heuristics, and value ordering heuristics. Let&rsquo;s take a closer look at how they work.</p>]]></description>
 </item></channel>
 </rss>

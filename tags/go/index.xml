@@ -3,7 +3,17 @@
         <title>Go - Tag - Blog of the Dad</title>
         <link>https://blog.dawnofthe.dad/tags/go/</link>
         <description>Go - Tag - Blog of the Dad</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 18 Nov 2026 21:10:00 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/go/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 21 Nov 2026 12:55:00 -0800</lastBuildDate><atom:link href="https://blog.dawnofthe.dad/tags/go/" rel="self" type="application/rss+xml" /><item>
+    <title>Building Codeword: The Solver</title>
+    <link>https://blog.dawnofthe.dad/posts/codeword-solver/</link>
+    <pubDate>Sat, 21 Nov 2026 12:55:00 -0800</pubDate><author>
+        <name>Andrei</name>
+    </author><guid>https://blog.dawnofthe.dad/posts/codeword-solver/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/codeword-solver-header.svg" referrerpolicy="no-referrer">
+            </div><p>After building <a href="https://blog.dawnofthe.dad/posts/anarchy-chess-solver/" rel="">Anarchy Chess</a>, I wanted a daily word game to pair with it and landed on <a href="https://dawnofthe.dad/codeword" target="_blank" rel="noopener noreferrer">Codeword</a>. A codeword starts with an open 13x13 crossword grid (around 120 white squares) with all of the clues removed. Instead, every white square carries a number from <code>#1</code> to <code>#26</code>. Those numbers form a 1-to-1 substitution cipher for the alphabet: each number stands for one distinct letter from A to Z, all 26 letters appear somewhere on the grid, and typing L onto <code>#2</code> fills every <code>#2</code> square across the board.</p>
+<p>Only two to four starter letters are revealed at the start, so cracking the rest is all about spotting word patterns and crossing letters. Under the hood, the Go CSP solver builds each day&rsquo;s grids, checks that a human can deduce all 26 letters step by step without guessing, proves no second solution exists, and powers hints.</p>]]></description>
+</item><item>
     <title>Building Anarchy Chess: The Solver</title>
     <link>https://blog.dawnofthe.dad/posts/anarchy-chess-solver/</link>
     <pubDate>Wed, 18 Nov 2026 21:10:00 -0800</pubDate><author>
